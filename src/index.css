@@ -103,7 +103,6 @@ body::after {
   border-color: hsl(42, 85%, 58%);
 }
 /* TEMPORARY debug guide — remove after checking alignment */
-.debug-edge-guide {
   position: fixed;
   top: 0;
   right: 40px;
