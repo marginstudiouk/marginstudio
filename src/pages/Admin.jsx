@@ -12,7 +12,7 @@ export default function Admin() {
 
   return (
     <div className="px-6 lg:px-10 py-16 md:py-24">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -57,8 +57,8 @@ export default function Admin() {
         ) : tab === 'team' ? (
           <InviteAdmin />
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            <div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            <div className="lg:col-span-2">
               {tab === 'products' ? <ProductForm /> : tab === 'posts' ? <PostForm /> : <PortfolioForm />}
             </div>
             <div className="lg:border-l lg:border-border lg:pl-12">
