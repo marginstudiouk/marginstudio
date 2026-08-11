@@ -1,6 +1,4 @@
-import React, { useRef, useState } from 'react';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+import React, { useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Loader2, Trash2, Plus } from 'lucide-react';
@@ -21,55 +19,45 @@ const slugify = (s) =>
 
 const today = () => new Date().toISOString().slice(0, 10);
 
+const isoToDMY = (iso) => {
+  if (!iso) return '';
+  const [y, m, d] = iso.split('-');
+  if (!y || !m || !d) return '';
+  return `${d}/${m}/${y}`;
+};
+
+const dmyToISO = (dmy) => {
+  const match = dmy.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (!match) return null;
+  const [, d, m, y] = match;
+  return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+};
+
 export default function PostForm() {
   const qc = useQueryClient();
   const [saving, setSaving] = useState(false);
   const [done, setDone] = useState(false);
+  const [coverUploading, setCoverUploading] = useState(false);
   const [form, setForm] = useState({
     title: '', slug: '', excerpt: '', content: '', cover_image_url: '', author: '', tags: '', status: 'published', published_date: today(),
   });
+  const [dateText, setDateText] = useState(isoToDMY(today()));
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
-  const quillRef = useRef(null);
-  const [imgUploading, setImgUploading] = useState(false);
-
-  const handleImageUpload = () => {
-    const input = document.createElement('input');
-    input.setAttribute('type', 'file');
-    input.setAttribute('accept', 'image/*');
-    input.click();
-    input.onchange = async () => {
-      const file = input.files[0];
-      if (!file) return;
-      setImgUploading(true);
-      try {
-        const path = `journal/${crypto.randomUUID()}-${file.name}`;
-        const { error } = await supabase.storage.from('images').upload(path, file);
-        if (error) throw error;
-        const { data: { publicUrl } } = supabase.storage.from('images').getPublicUrl(path);
-        const editor = quillRef.current?.getEditor();
-        const range = editor.getSelection(true);
-        editor.insertEmbed(range.index, 'image', publicUrl);
-        editor.setSelection(range.index + 1);
-      } finally {
-        setImgUploading(false);
-      }
-    };
-  };
-
-  const modules = {
-    toolbar: {
-      container: [
-        [{ header: [1, 2, 3, false] }],
-        ['bold', 'italic', 'underline'],
-        [{ color: [] }, { background: [] }],
-        [{ list: 'ordered' }, { list: 'bullet' }],
-        ['blockquote'],
-        ['link', 'image'],
-      ],
-      handlers: { image: handleImageUpload },
-    },
+  const handleCoverUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setCoverUploading(true);
+    try {
+      const path = `journal-covers/${crypto.randomUUID()}-${file.name}`;
+      const { error } = await supabase.storage.from('images').upload(path, file);
+      if (error) throw error;
+      const { data: { publicUrl } } = supabase.storage.from('images').getPublicUrl(path);
+      setForm((f) => ({ ...f, cover_image_url: publicUrl }));
+    } finally {
+      setCoverUploading(false);
+    }
   };
 
   const submit = async (e) => {
@@ -90,6 +78,7 @@ export default function PostForm() {
       });
       if (error) throw error;
       setForm({ title: '', slug: '', excerpt: '', content: '', cover_image_url: '', author: '', tags: '', status: 'published', published_date: today() });
+      setDateText(isoToDMY(today()));
       setDone(true);
       qc.invalidateQueries({ queryKey: ['admin-posts'] });
       qc.invalidateQueries({ queryKey: ['journal-posts'] });
@@ -116,21 +105,32 @@ export default function PostForm() {
         <Input value={form.excerpt} onChange={set('excerpt')} className="bg-background rounded-none" />
       </div>
       <div className="space-y-1.5">
-        <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Content</Label>
-        {imgUploading && <p className="font-mono text-xs text-primary">Uploading image…</p>}
-        <ReactQuill
-          ref={quillRef}
-          theme="snow"
+        <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Content (markdown)</Label>
+        <Textarea
+          rows={16}
           value={form.content}
-          onChange={(v) => setForm((f) => ({ ...f, content: v }))}
-          modules={modules}
-          className="bg-background rounded-none [&_.ql-toolbar]:border-none [&_.ql-toolbar]:bg-muted [&_.ql-container]:border-border [&_.ql-editor]:min-h-[320px] [&_.ql-editor]:font-sans [&_.ql-editor]:text-sm"
+          onChange={set('content')}
+          className="bg-background rounded-none resize-none font-mono text-sm"
+          placeholder={'## A heading\n\nA paragraph of text.\n\n- A bullet\n- Another bullet\n\n**Bold text** and *italic text* both work.'}
         />
+        <p className="text-xs font-sans text-muted-foreground/70">
+          Plain markdown — ## for headings, blank line between paragraphs, - for bullet lists, **bold**, *italic*.
+        </p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div className="space-y-1.5">
-          <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Cover image URL</Label>
-          <Input value={form.cover_image_url} onChange={set('cover_image_url')} className="bg-background rounded-none" />
+          <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Cover image</Label>
+          {form.cover_image_url ? (
+            <div className="flex items-center justify-between bg-muted px-4 py-3">
+              <span className="font-mono text-xs text-muted-foreground truncate max-w-[60%]">{form.cover_image_url.split('/').pop()}</span>
+              <button type="button" onClick={() => setForm((f) => ({ ...f, cover_image_url: '' }))} className="font-mono text-xs text-primary hover:underline">Replace</button>
+            </div>
+          ) : (
+            <label className="flex items-center justify-center cursor-pointer bg-muted hover:bg-muted/70 px-4 py-6 transition-colors">
+              <span className="font-mono text-xs tracking-widest uppercase text-muted-foreground">{coverUploading ? 'Uploading…' : 'Choose image'}</span>
+              <input type="file" accept="image/*" className="hidden" onChange={handleCoverUpload} disabled={coverUploading} />
+            </label>
+          )}
         </div>
         <div className="space-y-1.5">
           <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Author</Label>
@@ -153,8 +153,20 @@ export default function PostForm() {
           </Select>
         </div>
         <div className="space-y-1.5">
-          <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Publish date</Label>
-          <Input type="date" value={form.published_date} onChange={set('published_date')} className="bg-background rounded-none" />
+          <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Publish date (DD/MM/YYYY)</Label>
+          <Input
+            type="text"
+            inputMode="numeric"
+            placeholder="11/08/2026"
+            value={dateText}
+            onChange={(e) => {
+              const text = e.target.value;
+              setDateText(text);
+              const iso = dmyToISO(text);
+              if (iso) setForm((f) => ({ ...f, published_date: iso }));
+            }}
+            className="bg-background rounded-none"
+          />
         </div>
       </div>
       <Button type="submit" disabled={saving} className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-none font-mono text-xs tracking-widest uppercase px-6 py-4 disabled:opacity-60">

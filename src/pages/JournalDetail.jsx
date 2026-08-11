@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 import { supabase } from '@/lib/supabaseClient';
 import { useQuery } from '@tanstack/react-query';
 
@@ -92,7 +93,14 @@ export default function JournalDetail() {
             [&>a]:text-primary [&>a]:underline
             [&>blockquote]:border-l-2 [&>blockquote]:border-primary [&>blockquote]:pl-5 [&>blockquote]:italic [&>blockquote]:text-muted-foreground"
         >
-          <div dangerouslySetInnerHTML={{ __html: post.content || '' }} />
+          <ReactMarkdown
+            components={{
+              h2: ({ node, ...props }) => <h2 className="font-display tracking-wide" {...props} />,
+              p: ({ node, ...props }) => <p {...props} />,
+            }}
+          >
+            {post.content || ''}
+          </ReactMarkdown>
         </motion.article>
 
         {post.tags && post.tags.length > 0 && (
