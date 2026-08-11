@@ -28,7 +28,7 @@ export default function Navbar() {
             <img
               src="/images/logo.svg"
               alt="Margin Studio"
-              className="h-9 w-auto hover:opacity-70 transition-opacity"
+              className="h-14 w-auto hover:opacity-70 transition-opacity"
             />
           </Link>
 
