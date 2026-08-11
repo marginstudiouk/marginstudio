@@ -4,8 +4,8 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Loader2, Trash2, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import RichTextEditor from './RichTextEditor';
 import {
   Select,
   SelectContent,
@@ -105,17 +105,12 @@ export default function PostForm() {
         <Input value={form.excerpt} onChange={set('excerpt')} className="bg-background rounded-none" />
       </div>
       <div className="space-y-1.5">
-        <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Content (markdown)</Label>
-        <Textarea
-          rows={16}
+        <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Content</Label>
+        <RichTextEditor
           value={form.content}
-          onChange={set('content')}
-          className="bg-background rounded-none resize-none font-mono text-sm"
-          placeholder={'## A heading\n\nA paragraph of text.\n\n- A bullet\n- Another bullet\n\n**Bold text** and *italic text* both work.'}
+          onChange={(html) => setForm((f) => ({ ...f, content: html }))}
+          placeholder="Write the post…"
         />
-        <p className="text-xs font-sans text-muted-foreground/70">
-          Plain markdown — ## for headings, blank line between paragraphs, - for bullet lists, **bold**, *italic*.
-        </p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div className="space-y-1.5">
