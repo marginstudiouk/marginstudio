@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Loader2, Trash2, Plus } from 'lucide-react';
+import { Loader2, Trash2, Plus, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -31,17 +31,15 @@ export default function ProductForm() {
   const [saving, setSaving] = useState(false);
   const [done, setDone] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [galleryUploading, setGalleryUploading] = useState(false);
   const [form, setForm] = useState({
     name: '', slug: '', short_description: '', positioning_statement: '', what_this_is: '',
     included_items: '', audience: '', category: 'templates', price: '', cover_image_url: '',
-    storage_path: '', stripe_price_id: '', is_free: false,
+    gallery_urls: [], storage_path: '', stripe_price_id: '', is_free: false,
   });
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
-  // Uploads into the PRIVATE product-files bucket. The path (not a public URL) is
-  // what gets stored — actual downloads only ever happen through the
-  // get-download-link edge function, which mints a short-lived signed URL.
   const handleFile = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -54,6 +52,30 @@ export default function ProductForm() {
     } finally {
       setUploading(false);
     }
+  };
+
+  const handleGalleryUpload = async (e) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+    setGalleryUploading(true);
+    try {
+      const uploadedUrls = [];
+      for (const file of files) {
+        const path = `product-gallery/${crypto.randomUUID()}-${file.name}`;
+        const { error } = await supabase.storage.from('images').upload(path, file);
+        if (error) throw error;
+        const { data: { publicUrl } } = supabase.storage.from('images').getPublicUrl(path);
+        uploadedUrls.push(publicUrl);
+      }
+      setForm((f) => ({ ...f, gallery_urls: [...f.gallery_urls, ...uploadedUrls] }));
+    } finally {
+      setGalleryUploading(false);
+      e.target.value = '';
+    }
+  };
+
+  const removeGalleryImage = (url) => {
+    setForm((f) => ({ ...f, gallery_urls: f.gallery_urls.filter((u) => u !== url) }));
   };
 
   const submit = async (e) => {
@@ -72,12 +94,13 @@ export default function ProductForm() {
         category: form.category,
         price: form.price ? Number(form.price) : 0,
         cover_image_url: form.cover_image_url,
+        gallery_urls: form.gallery_urls,
         storage_path: form.storage_path || null,
         stripe_price_id: form.stripe_price_id || null,
         is_free: form.is_free,
       });
       if (error) throw error;
-      setForm({ name: '', slug: '', short_description: '', positioning_statement: '', what_this_is: '', included_items: '', audience: '', category: 'templates', price: '', cover_image_url: '', storage_path: '', stripe_price_id: '', is_free: false });
+      setForm({ name: '', slug: '', short_description: '', positioning_statement: '', what_this_is: '', included_items: '', audience: '', category: 'templates', price: '', cover_image_url: '', gallery_urls: [], storage_path: '', stripe_price_id: '', is_free: false });
       setDone(true);
       qc.invalidateQueries({ queryKey: ['admin-products'] });
     } finally {
@@ -154,25 +177,48 @@ export default function ProductForm() {
           </p>
         </div>
       )}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <div className="space-y-1.5">
-          <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Cover image URL</Label>
-          <Input value={form.cover_image_url} onChange={set('cover_image_url')} className="bg-background rounded-none" placeholder="/images/products/... or a full URL" />
-        </div>
-        <div className="space-y-1.5">
-          <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Downloadable file</Label>
-          {form.storage_path ? (
-            <div className="flex items-center justify-between bg-muted px-4 py-3">
-              <span className="font-mono text-xs text-muted-foreground truncate max-w-[60%]">{form.storage_path.split('/').pop()}</span>
-              <button type="button" onClick={() => setForm((f) => ({ ...f, storage_path: '' }))} className="font-mono text-xs text-primary hover:underline">Replace</button>
-            </div>
-          ) : (
-            <label className="flex items-center justify-center cursor-pointer bg-muted hover:bg-muted/70 px-4 py-6 transition-colors">
-              <span className="font-mono text-xs tracking-widest uppercase text-muted-foreground">{uploading ? 'Uploading…' : 'Choose file'}</span>
-              <input type="file" className="hidden" onChange={handleFile} disabled={uploading} />
-            </label>
-          )}
-        </div>
+      <div className="space-y-1.5">
+        <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Cover image URL</Label>
+        <Input value={form.cover_image_url} onChange={set('cover_image_url')} className="bg-background rounded-none" placeholder="/images/products/... or a full URL" />
+        <p className="text-xs font-sans text-muted-foreground/70">The main thumbnail shown in the shop grid.</p>
+      </div>
+      <div className="space-y-1.5">
+        <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Additional images</Label>
+        <p className="text-xs font-sans text-muted-foreground/70 mb-2">Shown as a gallery on the product page. Select multiple files at once, or add more one at a time.</p>
+        {form.gallery_urls.length > 0 && (
+          <div className="grid grid-cols-3 gap-2 mb-3">
+            {form.gallery_urls.map((url) => (
+              <div key={url} className="relative aspect-square bg-muted overflow-hidden group">
+                <img src={url} alt="" className="w-full h-full object-cover" />
+                <button
+                  type="button"
+                  onClick={() => removeGalleryImage(url)}
+                  className="absolute top-1 right-1 bg-background/90 p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+        <label className="flex items-center justify-center cursor-pointer bg-muted hover:bg-muted/70 px-4 py-6 transition-colors">
+          <span className="font-mono text-xs tracking-widest uppercase text-muted-foreground">{galleryUploading ? 'Uploading…' : 'Add image(s)'}</span>
+          <input type="file" accept="image/*" multiple className="hidden" onChange={handleGalleryUpload} disabled={galleryUploading} />
+        </label>
+      </div>
+      <div className="space-y-1.5">
+        <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Downloadable file</Label>
+        {form.storage_path ? (
+          <div className="flex items-center justify-between bg-muted px-4 py-3">
+            <span className="font-mono text-xs text-muted-foreground truncate max-w-[60%]">{form.storage_path.split('/').pop()}</span>
+            <button type="button" onClick={() => setForm((f) => ({ ...f, storage_path: '' }))} className="font-mono text-xs text-primary hover:underline">Replace</button>
+          </div>
+        ) : (
+          <label className="flex items-center justify-center cursor-pointer bg-muted hover:bg-muted/70 px-4 py-6 transition-colors">
+            <span className="font-mono text-xs tracking-widest uppercase text-muted-foreground">{uploading ? 'Uploading…' : 'Choose file'}</span>
+            <input type="file" className="hidden" onChange={handleFile} disabled={uploading} />
+          </label>
+        )}
       </div>
       <Button type="submit" disabled={saving} className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-none font-mono text-xs tracking-widest uppercase px-6 py-4 disabled:opacity-60">
         {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Plus className="w-4 h-4 mr-2" />}

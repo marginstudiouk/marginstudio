@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Loader2, Trash2, Plus } from 'lucide-react';
+import { Loader2, Trash2, Plus, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -31,9 +31,10 @@ export default function PortfolioForm() {
   const [saving, setSaving] = useState(false);
   const [done, setDone] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [galleryUploading, setGalleryUploading] = useState(false);
   const [form, setForm] = useState({
     name: '', slug: '', client: '', service_type: 'branding',
-    cover_image_url: '', excerpt: '', content: '',
+    cover_image_url: '', gallery_urls: [], excerpt: '', content: '',
   });
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
@@ -53,6 +54,30 @@ export default function PortfolioForm() {
     }
   };
 
+  const handleGalleryUpload = async (e) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+    setGalleryUploading(true);
+    try {
+      const uploadedUrls = [];
+      for (const file of files) {
+        const path = `portfolio-gallery/${crypto.randomUUID()}-${file.name}`;
+        const { error } = await supabase.storage.from('images').upload(path, file);
+        if (error) throw error;
+        const { data: { publicUrl } } = supabase.storage.from('images').getPublicUrl(path);
+        uploadedUrls.push(publicUrl);
+      }
+      setForm((f) => ({ ...f, gallery_urls: [...f.gallery_urls, ...uploadedUrls] }));
+    } finally {
+      setGalleryUploading(false);
+      e.target.value = '';
+    }
+  };
+
+  const removeGalleryImage = (url) => {
+    setForm((f) => ({ ...f, gallery_urls: f.gallery_urls.filter((u) => u !== url) }));
+  };
+
   const submit = async (e) => {
     e.preventDefault();
     setSaving(true);
@@ -64,11 +89,12 @@ export default function PortfolioForm() {
         client: form.client,
         service_type: form.service_type,
         cover_image_url: form.cover_image_url,
+        gallery_urls: form.gallery_urls,
         excerpt: form.excerpt,
         content: form.content,
       });
       if (error) throw error;
-      setForm({ name: '', slug: '', client: '', service_type: 'branding', cover_image_url: '', excerpt: '', content: '' });
+      setForm({ name: '', slug: '', client: '', service_type: 'branding', cover_image_url: '', gallery_urls: [], excerpt: '', content: '' });
       setDone(true);
       qc.invalidateQueries({ queryKey: ['admin-portfolio'] });
     } finally {
@@ -122,6 +148,30 @@ export default function PortfolioForm() {
           </label>
         )}
         <Input value={form.cover_image_url} onChange={set('cover_image_url')} placeholder="or paste image URL" className="bg-background rounded-none mt-2" />
+      </div>
+      <div className="space-y-1.5">
+        <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Additional images</Label>
+        <p className="text-xs font-sans text-muted-foreground/70 mb-2">Shown as a gallery on the case study page. Select multiple files at once, or add more one at a time.</p>
+        {form.gallery_urls.length > 0 && (
+          <div className="grid grid-cols-3 gap-2 mb-3">
+            {form.gallery_urls.map((url) => (
+              <div key={url} className="relative aspect-square bg-muted overflow-hidden group">
+                <img src={url} alt="" className="w-full h-full object-cover" />
+                <button
+                  type="button"
+                  onClick={() => removeGalleryImage(url)}
+                  className="absolute top-1 right-1 bg-background/90 p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+        <label className="flex items-center justify-center cursor-pointer bg-muted hover:bg-muted/70 px-4 py-6 transition-colors">
+          <span className="font-mono text-xs tracking-widest uppercase text-muted-foreground">{galleryUploading ? 'Uploading…' : 'Add image(s)'}</span>
+          <input type="file" accept="image/*" multiple className="hidden" onChange={handleGalleryUpload} disabled={galleryUploading} />
+        </label>
       </div>
       <div className="space-y-1.5">
         <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Case study content (markdown)</Label>
