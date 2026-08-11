@@ -1,0 +1,221 @@
+import React, { useState } from 'react';
+import { supabase } from '@/lib/supabaseClient';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Loader2, Trash2, Plus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+
+const slugify = (s) =>
+  s.toLowerCase().trim().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-');
+
+const categoryOptions = [
+  { value: 'launch_kits', label: 'Launch kits' },
+  { value: 'content_systems', label: 'Content systems' },
+  { value: 'branding_kits', label: 'Branding kits' },
+  { value: 'templates', label: 'Templates' },
+  { value: 'premade_covers', label: 'Premade covers' },
+];
+
+export default function ProductForm() {
+  const qc = useQueryClient();
+  const [saving, setSaving] = useState(false);
+  const [done, setDone] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [form, setForm] = useState({
+    name: '', slug: '', short_description: '', positioning_statement: '', what_this_is: '',
+    included_items: '', audience: '', category: 'templates', price: '', cover_image_url: '',
+    storage_path: '', stripe_price_id: '', is_free: false,
+  });
+
+  const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
+
+  // Uploads into the PRIVATE product-files bucket. The path (not a public URL) is
+  // what gets stored — actual downloads only ever happen through the
+  // get-download-link edge function, which mints a short-lived signed URL.
+  const handleFile = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const path = `${crypto.randomUUID()}-${file.name}`;
+      const { error } = await supabase.storage.from('product-files').upload(path, file);
+      if (error) throw error;
+      setForm((f) => ({ ...f, storage_path: path }));
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const submit = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    setDone(false);
+    try {
+      const { error } = await supabase.from('products').insert({
+        name: form.name,
+        slug: form.slug || slugify(form.name),
+        short_description: form.short_description,
+        positioning_statement: form.positioning_statement,
+        what_this_is: form.what_this_is,
+        included_items: form.included_items.split('\n').map((s) => s.trim()).filter(Boolean),
+        audience: form.audience,
+        category: form.category,
+        price: form.price ? Number(form.price) : 0,
+        cover_image_url: form.cover_image_url,
+        storage_path: form.storage_path || null,
+        stripe_price_id: form.stripe_price_id || null,
+        is_free: form.is_free,
+      });
+      if (error) throw error;
+      setForm({ name: '', slug: '', short_description: '', positioning_statement: '', what_this_is: '', included_items: '', audience: '', category: 'templates', price: '', cover_image_url: '', storage_path: '', stripe_price_id: '', is_free: false });
+      setDone(true);
+      qc.invalidateQueries({ queryKey: ['admin-products'] });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <form onSubmit={submit} className="space-y-6">
+      {done && <p className="text-sm font-sans text-primary">Product saved.</p>}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div className="space-y-1.5">
+          <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Name *</Label>
+          <Input required value={form.name} onChange={set('name')} className="bg-background rounded-none" />
+        </div>
+        <div className="space-y-1.5">
+          <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Slug (auto from name)</Label>
+          <Input value={form.slug} onChange={set('slug')} placeholder={slugify(form.name) || 'auto'} className="bg-background rounded-none" />
+        </div>
+      </div>
+      <div className="space-y-1.5">
+        <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Short description *</Label>
+        <Input required value={form.short_description} onChange={set('short_description')} className="bg-background rounded-none" />
+      </div>
+      <div className="space-y-1.5">
+        <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Positioning statement</Label>
+        <Input value={form.positioning_statement} onChange={set('positioning_statement')} className="bg-background rounded-none" />
+      </div>
+      <div className="space-y-1.5">
+        <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">What this is</Label>
+        <Textarea rows={4} value={form.what_this_is} onChange={set('what_this_is')} className="bg-background rounded-none resize-none" />
+      </div>
+      <div className="space-y-1.5">
+        <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Included items (one per line)</Label>
+        <Textarea rows={5} value={form.included_items} onChange={set('included_items')} className="bg-background rounded-none resize-none" />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div className="space-y-1.5">
+          <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Audience</Label>
+          <Input value={form.audience} onChange={set('audience')} className="bg-background rounded-none" />
+        </div>
+        <div className="space-y-1.5">
+          <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Category</Label>
+          <Select value={form.category} onValueChange={(v) => setForm((f) => ({ ...f, category: v }))}>
+            <SelectTrigger className="bg-background rounded-none"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {categoryOptions.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-1.5">
+          <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Price (GBP) *</Label>
+          <Input required type="number" step="0.01" value={form.price} onChange={set('price')} className="bg-background rounded-none" />
+        </div>
+      </div>
+      <div className="flex items-center justify-between py-2">
+        <div>
+          <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Free resource</Label>
+          <p className="text-xs font-sans text-muted-foreground/70 mt-1">Shows on the Resources page instead of the Shop.</p>
+        </div>
+        <Switch checked={form.is_free} onCheckedChange={(v) => setForm((f) => ({ ...f, is_free: v }))} />
+      </div>
+      {!form.is_free && (
+        <div className="space-y-1.5">
+          <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Stripe price ID</Label>
+          <Input
+            value={form.stripe_price_id}
+            onChange={set('stripe_price_id')}
+            placeholder="price_1AbCdEfGhIjKlMn"
+            className="bg-background rounded-none font-mono text-sm"
+          />
+          <p className="text-xs font-sans text-muted-foreground/70">
+            Create a matching Product + Price in the Stripe Dashboard first, then paste the Price ID here. Required before this can be purchased.
+          </p>
+        </div>
+      )}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div className="space-y-1.5">
+          <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Cover image URL</Label>
+          <Input value={form.cover_image_url} onChange={set('cover_image_url')} className="bg-background rounded-none" placeholder="/images/products/... or a full URL" />
+        </div>
+        <div className="space-y-1.5">
+          <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Downloadable file</Label>
+          {form.storage_path ? (
+            <div className="flex items-center justify-between bg-muted px-4 py-3">
+              <span className="font-mono text-xs text-muted-foreground truncate max-w-[60%]">{form.storage_path.split('/').pop()}</span>
+              <button type="button" onClick={() => setForm((f) => ({ ...f, storage_path: '' }))} className="font-mono text-xs text-primary hover:underline">Replace</button>
+            </div>
+          ) : (
+            <label className="flex items-center justify-center cursor-pointer bg-muted hover:bg-muted/70 px-4 py-6 transition-colors">
+              <span className="font-mono text-xs tracking-widest uppercase text-muted-foreground">{uploading ? 'Uploading…' : 'Choose file'}</span>
+              <input type="file" className="hidden" onChange={handleFile} disabled={uploading} />
+            </label>
+          )}
+        </div>
+      </div>
+      <Button type="submit" disabled={saving} className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-none font-mono text-xs tracking-widest uppercase px-6 py-4 disabled:opacity-60">
+        {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Plus className="w-4 h-4 mr-2" />}
+        Save product
+      </Button>
+    </form>
+  );
+}
+
+export function ProductsList() {
+  const { data: products = [] } = useQuery({
+    queryKey: ['admin-products'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('products').select('*').order('created_at', { ascending: false }).limit(100);
+      if (error) throw error;
+      return data;
+    },
+  });
+  const qc = useQueryClient();
+
+  const remove = async (id) => {
+    if (!window.confirm('Delete this product?')) return;
+    await supabase.from('products').delete().eq('id', id);
+    qc.invalidateQueries({ queryKey: ['admin-products'] });
+  };
+
+  if (products.length === 0) return <p className="font-mono text-xs text-muted-foreground">No products yet.</p>;
+
+  return (
+    <div className="space-y-2">
+      {products.map((p) => (
+        <div key={p.id} className="flex items-center justify-between py-3">
+          <div>
+            <p className="font-sans text-sm font-medium text-foreground">{p.name}</p>
+            <p className="font-mono text-xs text-muted-foreground">
+              £{p.price} · {p.category}{p.is_free ? ' · free' : ''}{!p.is_free && !p.stripe_price_id ? ' · ⚠ no Stripe price' : ''}
+            </p>
+          </div>
+          <button onClick={() => remove(p.id)} className="text-muted-foreground hover:text-destructive transition-colors">
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
+      ))}
+    </div>
+  );
+}
