@@ -5,7 +5,7 @@ import { useAuth } from '@/lib/AuthContext';
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isAdmin, signOut } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -18,6 +18,14 @@ export default function Navbar() {
   ];
 
   const isActive = (path) => location.pathname === path;
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+  };
+
+  const accountLabel = isAdmin ? 'Admin' : 'Account';
+  const accountPath = isAdmin ? '/admin' : '/account';
 
   return (
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border px-6 lg:px-10">
@@ -47,12 +55,20 @@ export default function Navbar() {
 
           <div className="hidden md:flex items-center gap-5">
             {isAuthenticated ? (
-              <Link
-                to="/account"
-                className="font-mono text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Account
-              </Link>
+              <>
+                <Link
+                  to={accountPath}
+                  className="font-mono text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {accountLabel}
+                </Link>
+                <button
+                  onClick={handleSignOut}
+                  className="font-mono text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Sign out
+                </button>
+              </>
             ) : (
               <button
                 onClick={() => navigate('/login')}
@@ -92,13 +108,21 @@ export default function Navbar() {
           ))}
           <div className="pt-5 border-t border-border space-y-4">
             {isAuthenticated ? (
-              <Link
-                to="/account"
-                className="block font-mono text-xs tracking-widest uppercase text-muted-foreground"
-                onClick={() => setMobileOpen(false)}
-              >
-                Account
-              </Link>
+              <>
+                <Link
+                  to={accountPath}
+                  className="block font-mono text-xs tracking-widest uppercase text-muted-foreground"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {accountLabel}
+                </Link>
+                <button
+                  className="block font-mono text-xs tracking-widest uppercase text-muted-foreground"
+                  onClick={() => { setMobileOpen(false); handleSignOut(); }}
+                >
+                  Sign out
+                </button>
+              </>
             ) : (
               <button
                 className="block font-mono text-xs tracking-widest uppercase text-muted-foreground"

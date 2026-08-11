@@ -31,6 +31,7 @@ export default function ProductForm() {
   const [saving, setSaving] = useState(false);
   const [done, setDone] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [coverUploading, setCoverUploading] = useState(false);
   const [galleryUploading, setGalleryUploading] = useState(false);
   const [form, setForm] = useState({
     name: '', slug: '', short_description: '', positioning_statement: '', what_this_is: '',
@@ -39,6 +40,21 @@ export default function ProductForm() {
   });
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
+
+  const handleCoverUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setCoverUploading(true);
+    try {
+      const path = `product-covers/${crypto.randomUUID()}-${file.name}`;
+      const { error } = await supabase.storage.from('images').upload(path, file);
+      if (error) throw error;
+      const { data: { publicUrl } } = supabase.storage.from('images').getPublicUrl(path);
+      setForm((f) => ({ ...f, cover_image_url: publicUrl }));
+    } finally {
+      setCoverUploading(false);
+    }
+  };
 
   const handleFile = async (e) => {
     const file = e.target.files?.[0];
@@ -178,8 +194,18 @@ export default function ProductForm() {
         </div>
       )}
       <div className="space-y-1.5">
-        <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Cover image URL</Label>
-        <Input value={form.cover_image_url} onChange={set('cover_image_url')} className="bg-background rounded-none" placeholder="/images/products/... or a full URL" />
+        <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Cover image</Label>
+        {form.cover_image_url ? (
+          <div className="flex items-center justify-between bg-muted px-4 py-3">
+            <span className="font-mono text-xs text-muted-foreground truncate max-w-[60%]">{form.cover_image_url.split('/').pop()}</span>
+            <button type="button" onClick={() => setForm((f) => ({ ...f, cover_image_url: '' }))} className="font-mono text-xs text-primary hover:underline">Replace</button>
+          </div>
+        ) : (
+          <label className="flex items-center justify-center cursor-pointer bg-muted hover:bg-muted/70 px-4 py-6 transition-colors">
+            <span className="font-mono text-xs tracking-widest uppercase text-muted-foreground">{coverUploading ? 'Uploading…' : 'Choose image'}</span>
+            <input type="file" accept="image/*" className="hidden" onChange={handleCoverUpload} disabled={coverUploading} />
+          </label>
+        )}
         <p className="text-xs font-sans text-muted-foreground/70">The main thumbnail shown in the shop grid.</p>
       </div>
       <div className="space-y-1.5">
