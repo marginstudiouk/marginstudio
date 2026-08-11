@@ -20,10 +20,9 @@ export default function Navbar() {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
-      <div className="max-w-7xl mx-auto px-6 lg:px-10">
+    <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border px-6 lg:px-10">
+      <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
           <Link to="/" className="flex items-center">
             <img
               src="/images/logo.svg"
@@ -80,7 +79,7 @@ export default function Navbar() {
       </div>
 
       {mobileOpen && (
-        <div className="md:hidden border-t border-border bg-background px-6 py-6 space-y-5">
+        <div className="md:hidden border-t border-border bg-background -mx-6 lg:-mx-10 px-6 py-6 space-y-5">
           {navLinks.map((link) => (
             <Link
               key={link.path}
