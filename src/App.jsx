@@ -34,6 +34,7 @@ import ResetPassword from './pages/ResetPassword';
 function App() {
   return (
     <AuthProvider>
+      <div className="debug-edge-guide"></div>
       <QueryClientProvider client={queryClientInstance}>
         <Router>
           <Routes>
