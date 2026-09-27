@@ -5,10 +5,6 @@ export default function PageNotFound() {
   return (
     <div className="min-h-screen flex items-center justify-center px-6 lg:px-10 py-16 bg-background">
       <div className="max-w-xl w-full text-center">
-        <p className="font-mono text-xs tracking-widest uppercase text-primary mb-8">
-          Margin · 404
-        </p>
-
         <h1 className="font-display text-6xl md:text-8xl tracking-wide text-foreground leading-[0.9] mb-8">
           This page is<br />unpublished.
         </h1>

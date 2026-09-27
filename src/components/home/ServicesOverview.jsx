@@ -10,7 +10,6 @@ export default function ServicesOverview() {
       <div className="max-w-7xl mx-auto">
         <div className="flex items-end justify-between mb-14">
           <div>
-            <p className="font-mono text-xs tracking-widest uppercase text-muted-foreground mb-3">Studio</p>
             <h2 className="font-display text-4xl md:text-5xl uppercase tracking-wide text-foreground">
               What we do
             </h2>

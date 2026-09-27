@@ -8,16 +8,6 @@ export default function HeroSection() {
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
         {/* Text */}
         <div className="lg:col-span-6 pt-6">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.4 }}
-            className="mb-6"
-          >
-            <span className="font-mono text-xs text-primary tracking-widest uppercase">
-              Marketing studio · Publishing
-            </span>
-          </motion.div>
 
           <motion.h1
             initial={{ opacity: 0, y: 24 }}
