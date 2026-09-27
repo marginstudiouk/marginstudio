@@ -58,7 +58,7 @@ export default function ProductCard({ product, index = 0 }) {
               {product.name}
             </h3>
             {!product.sold_out && (
-              <span className="font-mono text-sm text-gold whitespace-nowrap">
+              <span className="font-mono text-sm text-primary whitespace-nowrap">
                 {hasVariants ? `From £${displayPrice}` : `£${displayPrice}`}
               </span>
             )}

@@ -60,7 +60,7 @@ export default function CaseStudyRow({ serviceType }) {
                     {item.client}
                   </p>
                 )}
-                <h3 className="font-display text-lg text-background leading-tight group-hover:text-gold transition-colors">
+                <h3 className="font-display text-lg text-background leading-tight group-hover:text-primary transition-colors">
                   {item.name}
                 </h3>
               </div>

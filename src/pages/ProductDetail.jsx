@@ -119,7 +119,7 @@ export default function ProductDetail() {
               </p>
               <h1 className="font-sans text-2xl md:text-3xl font-semibold text-foreground mb-4 leading-snug">{product.name}</h1>
               {!product.sold_out && (
-                <p className="font-mono text-xl text-gold">
+                <p className="font-mono text-xl text-primary">
                   {hasVariants && !selectedVariant ? `From £${displayPrice}` : `£${displayPrice}`}
                 </p>
               )}
@@ -175,7 +175,7 @@ export default function ProductDetail() {
                       }`}
                     >
                       <span className="text-sm font-sans text-foreground">{v.label}</span>
-                      <span className="font-mono text-sm text-gold">£{v.price}</span>
+                      <span className="font-mono text-sm text-primary">£{v.price}</span>
                     </button>
                   ))}
                 </div>

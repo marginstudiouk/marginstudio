@@ -68,7 +68,7 @@ export default function CustomersList() {
                 )}
               </td>
               <td className="py-3 pr-4 font-sans text-foreground">{r.product_name}</td>
-              <td className="py-3 pr-4 font-mono text-xs text-gold">£{r.amount_paid}</td>
+              <td className="py-3 pr-4 font-mono text-xs text-primary">£{r.amount_paid}</td>
               <td className="py-3 pr-4 font-mono text-xs text-muted-foreground">{r.download_count} / {r.max_downloads}</td>
               <td className="py-3 font-mono text-xs text-muted-foreground">
                 {new Date(r.created_at).toLocaleDateString('en-GB')}
