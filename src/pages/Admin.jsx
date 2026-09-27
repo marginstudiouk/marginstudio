@@ -4,10 +4,10 @@ import ProductForm, { ProductsList } from '@/components/admin/ProductForm';
 import PostForm, { PostsList } from '@/components/admin/PostForm';
 import SubscribersList from '@/components/admin/SubscribersList';
 import PortfolioForm, { PortfolioList } from '@/components/admin/PortfolioForm';
+import CustomersList from '@/components/admin/CustomersList';
 import InviteAdmin from '@/components/admin/InviteAdmin';
 
 export default function Admin() {
-  // AdminRoute (in App.jsx) already guarantees we only get here as a logged-in admin.
   const [tab, setTab] = useState('products');
   const [editingProduct, setEditingProduct] = useState(null);
   const [editingPost, setEditingPost] = useState(null);
@@ -36,12 +36,12 @@ export default function Admin() {
           <p className="text-sm font-sans text-muted-foreground">Add products and journal posts.</p>
         </motion.div>
 
-        {/* Tabs */}
         <div className="flex gap-8 mb-10">
           {[
             { id: 'products', label: 'Products' },
             { id: 'posts', label: 'Journal posts' },
             { id: 'portfolio', label: 'Portfolio' },
+            { id: 'customers', label: 'Customers' },
             { id: 'subscribers', label: 'Subscribers' },
             { id: 'team', label: 'Team' },
           ].map((t) => (
@@ -63,6 +63,13 @@ export default function Admin() {
               Newsletter subscribers
             </p>
             <SubscribersList />
+          </div>
+        ) : tab === 'customers' ? (
+          <div>
+            <p className="font-mono text-xs tracking-widest uppercase text-muted-foreground mb-5">
+              Customers &amp; purchases
+            </p>
+            <CustomersList />
           </div>
         ) : tab === 'team' ? (
           <InviteAdmin />

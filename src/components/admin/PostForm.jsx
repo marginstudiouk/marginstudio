@@ -50,60 +50,6 @@ const postToForm = (p) => ({
 });
 
 export default function PostForm({ editingPost, onDone }) {
-  const qc =
-cat > src/components/admin/PostForm.jsx << 'EOF'
-import React, { useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Loader2, Trash2, Plus, Pencil } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import RichTextEditor from './RichTextEditor';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-
-const slugify = (s) =>
-  s.toLowerCase().trim().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-');
-
-const today = () => new Date().toISOString().slice(0, 10);
-
-const isoToDMY = (iso) => {
-  if (!iso) return '';
-  const [y, m, d] = iso.split('-');
-  if (!y || !m || !d) return '';
-  return `${d}/${m}/${y}`;
-};
-
-const dmyToISO = (dmy) => {
-  const match = dmy.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-  if (!match) return null;
-  const [, d, m, y] = match;
-  return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
-};
-
-const emptyForm = {
-  title: '', slug: '', excerpt: '', content: '', cover_image_url: '', author: '', tags: '', status: 'published', published_date: today(),
-};
-
-const postToForm = (p) => ({
-  title: p.title || '',
-  slug: p.slug || '',
-  excerpt: p.excerpt || '',
-  content: p.content || '',
-  cover_image_url: p.cover_image_url || '',
-  author: p.author || '',
-  tags: (p.tags || []).join(', '),
-  status: p.status || 'published',
-  published_date: p.published_date || today(),
-});
-
-export default function PostForm({ editingPost, onDone }) {
   const qc = useQueryClient();
   const [saving, setSaving] = useState(false);
   const [done, setDone] = useState(false);
