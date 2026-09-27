@@ -28,7 +28,7 @@ export default function Navbar() {
   const accountPath = isAdmin ? '/admin' : '/account';
 
   return (
-    <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border px-6 lg:px-10">
+    <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm px-6 lg:px-10">
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center">
