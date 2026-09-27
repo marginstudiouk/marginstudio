@@ -47,9 +47,9 @@ export default function ResourceCard({ product, index = 0 }) {
       transition={{ duration: 0.5, delay: index * 0.06 }}
       className="flex flex-col"
     >
-      <div className="aspect-[4/3] bg-secondary/50 overflow-hidden mb-5 relative rounded-[8px]">
+      <div className="aspect-[4/3] bg-secondary/50 overflow-hidden mb-5 relative">
         {product.cover_image_url ? (
-          <img src={product.cover_image_url} alt={product.name} className="w-full h-full object-cover" />
+          <img src={product.cover_image_url} alt={product.name} className="w-full h-full object-contain" />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <span className="font-display text-2xl text-muted-foreground tracking-wide">{product.name}</span>

@@ -24,12 +24,12 @@ export default function ProductCard({ product, index = 0 }) {
       transition={{ duration: 0.5, delay: index * 0.06 }}
     >
       <Link to={`/product/${product.slug}`} className="group block">
-        <div className="aspect-[4/3] bg-secondary/50 overflow-hidden mb-5 relative rounded-[8px]">
+        <div className="aspect-[4/3] bg-secondary/50 overflow-hidden mb-5 relative">
           {product.cover_image_url ? (
             <img
               src={product.cover_image_url}
               alt={product.name}
-              className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.04] ${product.sold_out ? 'opacity-50 grayscale' : ''}`}
+              className={`w-full h-full object-contain transition-transform duration-700 group-hover:scale-[1.04] ${product.sold_out ? 'opacity-50 grayscale' : ''}`}
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center grid-overlay">

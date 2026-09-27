@@ -89,7 +89,7 @@ export default function Library() {
                   <div className="flex items-center gap-5">
                     {item.product?.cover_image_url ? (
                       <div className="w-16 h-12 bg-secondary/50 overflow-hidden flex-shrink-0">
-                        <img src={item.product.cover_image_url} alt={item.product_name} className="w-full h-full object-cover" />
+                        <img src={item.product.cover_image_url} alt={item.product_name} className="w-full h-full object-contain" />
                       </div>
                     ) : (
                       <div className="w-16 h-12 bg-secondary/50 flex-shrink-0" />
