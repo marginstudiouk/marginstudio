@@ -72,9 +72,6 @@ export default function HeroSection() {
               className="w-full h-full object-cover"
             />
           </div>
-          <span className="font-mono text-xs text-muted-foreground/40 tracking-widest uppercase mt-4 block">
-            Recent covers · studio work
-          </span>
         </motion.div>
       </div>
     </section>
