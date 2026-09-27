@@ -110,6 +110,10 @@ export default function ProductForm() {
         .filter((v) => v.label && v.price && v.stripe_price_id)
         .map((v) => ({ id: v.id, label: v.label, price: Number(v.price), stripe_price_id: v.stripe_price_id }));
 
+      const derivedPrice = cleanVariants.length > 0
+        ? Math.min(...cleanVariants.map((v) => v.price))
+        : (form.price ? Number(form.price) : 0);
+
       const { error } = await supabase.from('products').insert({
         name: form.name,
         slug: form.slug || slugify(form.name),
@@ -119,7 +123,7 @@ export default function ProductForm() {
         included_items: form.included_items.split('\n').map((s) => s.trim()).filter(Boolean),
         audience: form.audience,
         category: form.category,
-        price: form.price ? Number(form.price) : 0,
+        price: derivedPrice,
         cover_image_url: form.cover_image_url,
         gallery_urls: form.gallery_urls,
         storage_path: form.storage_path || null,
@@ -180,11 +184,12 @@ export default function ProductForm() {
             </SelectContent>
           </Select>
         </div>
-        <div className="space-y-1.5">
-          <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Price (GBP) *</Label>
-          <Input required type="number" step="0.01" value={form.price} onChange={set('price')} className="bg-background rounded-none" />
-          <p className="text-xs font-sans text-muted-foreground/70">If you add pricing options below, this is just the "from" price shown in the shop grid.</p>
-        </div>
+        {form.variants.length === 0 && (
+          <div className="space-y-1.5">
+            <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Price (GBP) *</Label>
+            <Input required type="number" step="0.01" value={form.price} onChange={set('price')} className="bg-background rounded-none" />
+          </div>
+        )}
       </div>
       <div className="flex items-center justify-between py-2">
         <div>
@@ -202,7 +207,7 @@ export default function ProductForm() {
         </div>
         <Switch checked={form.sold_out} onCheckedChange={(v) => setForm((f) => ({ ...f, sold_out: v }))} />
       </div>
-      {!form.is_free && (
+      {!form.is_free && form.variants.length === 0 && (
         <div className="space-y-1.5">
           <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Stripe price ID</Label>
           <Input
@@ -212,7 +217,7 @@ export default function ProductForm() {
             className="bg-background rounded-none font-mono text-sm"
           />
           <p className="text-xs font-sans text-muted-foreground/70">
-            Only needed if this product has a single price (no options below). Create a matching Product + Price in the Stripe Dashboard first, then paste the Price ID here.
+            Create a matching Product + Price in the Stripe Dashboard first, then paste the Price ID here. Required before this can be purchased.
           </p>
         </div>
       )}
@@ -221,7 +226,7 @@ export default function ProductForm() {
           <div>
             <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Pricing options</Label>
             <p className="text-xs font-sans text-muted-foreground/70 mt-1">
-              E.g. a premade cover sold as "Ebook" (£45) or "Ebook + Print" (£75) — each needs its own Stripe price. Leave empty to just use the single Stripe price ID above.
+              E.g. an Ebook option at £65 and an Ebook + Print option at £95 — each needs its own Stripe price. The cheapest option here is what shows in the shop grid.
             </p>
           </div>
           {form.variants.map((v) => (
