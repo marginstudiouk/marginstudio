@@ -17,14 +17,14 @@ export default function SplitDecision() {
       </div>
 
       {/* Two boxes */}
-      <div className="max-w-7xl mx-auto px-6 lg:px-10 grid grid-cols-1 md:grid-cols-2 border-t border-border">
+      <div className="max-w-7xl mx-auto px-6 lg:px-10 grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Indigo block */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="bg-primary p-10 md:p-12 lg:p-16 relative overflow-hidden md:border-r md:border-primary-foreground/10"
+          className="bg-primary p-10 md:p-12 lg:p-16 relative overflow-hidden rounded-[8px]"
         >
           <div className="absolute inset-0 opacity-10"
             style={{
@@ -56,7 +56,7 @@ export default function SplitDecision() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="bg-secondary/50 p-10 md:p-12 lg:p-16"
+          className="bg-secondary/50 p-10 md:p-12 lg:p-16 rounded-[8px]"
         >
           <p className="font-mono text-xs tracking-widest uppercase text-muted-foreground mb-8">02</p>
           <h3 className="font-display text-4xl md:text-5xl uppercase tracking-wide text-foreground leading-[0.95] mb-6">
