@@ -18,12 +18,12 @@ export default function ServiceDetail() {
     );
   }
 
-  const nextService = services[(parseInt(service.num) - 1 + 1) % services.length];
+  const currentIndex = services.findIndex((s) => s.slug === slug);
+  const nextService = services[(currentIndex + 1) % services.length];
 
   return (
     <div className="px-6 lg:px-10 py-16 md:py-24">
       <div className="max-w-5xl mx-auto">
-        {/* Back link */}
         <Link
           to="/services"
           className="inline-flex items-center font-mono text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors mb-12 group"
@@ -32,7 +32,6 @@ export default function ServiceDetail() {
           All services
         </Link>
 
-        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -47,7 +46,6 @@ export default function ServiceDetail() {
           </p>
         </motion.div>
 
-        {/* Hero image */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -61,7 +59,6 @@ export default function ServiceDetail() {
           />
         </motion.div>
 
-        {/* Overview */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -73,7 +70,6 @@ export default function ServiceDetail() {
           <p className="text-base font-sans text-foreground leading-relaxed md:col-span-9 max-w-2xl">{service.overview}</p>
         </motion.div>
 
-        {/* Process */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -85,15 +81,13 @@ export default function ServiceDetail() {
           <div className="space-y-8">
             {service.process.map((p, i) => (
               <div key={i} className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8">
-                <span className="font-mono text-xs text-primary md:col-span-1 pt-1">{service.num}.{i + 1}</span>
-                <h3 className="font-sans text-lg font-semibold text-foreground md:col-span-4">{p.step}</h3>
+                <h3 className="font-sans text-lg font-semibold text-foreground md:col-span-5">{p.step}</h3>
                 <p className="text-sm font-sans text-muted-foreground leading-relaxed md:col-span-7">{p.detail}</p>
               </div>
             ))}
           </div>
         </motion.div>
 
-        {/* Deliverables */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -112,7 +106,6 @@ export default function ServiceDetail() {
           </div>
         </motion.div>
 
-        {/* CTA */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -150,7 +143,6 @@ export default function ServiceDetail() {
 
         <CaseStudyRow serviceType={service.slug} />
 
-        {/* Next service */}
         <Link
           to={`/services/${nextService.slug}`}
           className="flex items-center justify-between py-8 group"
