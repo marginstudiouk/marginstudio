@@ -25,7 +25,7 @@ const categoryOptions = [
   { value: 'elements', label: 'Elements' },
 ];
 
-const emptyVariant = () => ({ id: crypto.randomUUID(), label: '', price: '', stripe_price_id: '' });
+const emptyVariant = () => ({ id: crypto.randomUUID(), label: '', price: '' });
 
 export default function ProductForm() {
   const qc = useQueryClient();
@@ -37,7 +37,7 @@ export default function ProductForm() {
   const [form, setForm] = useState({
     name: '', slug: '', short_description: '', positioning_statement: '', what_this_is: '',
     included_items: '', audience: '', category: 'diy_kits', price: '', cover_image_url: '',
-    gallery_urls: [], storage_path: '', stripe_price_id: '', is_free: false, sold_out: false,
+    gallery_urls: [], storage_path: '', is_free: false, sold_out: false,
     variants: [],
   });
 
@@ -107,8 +107,8 @@ export default function ProductForm() {
     setDone(false);
     try {
       const cleanVariants = form.variants
-        .filter((v) => v.label && v.price && v.stripe_price_id)
-        .map((v) => ({ id: v.id, label: v.label, price: Number(v.price), stripe_price_id: v.stripe_price_id }));
+        .filter((v) => v.label && v.price)
+        .map((v) => ({ id: v.id, label: v.label, price: Number(v.price) }));
 
       const derivedPrice = cleanVariants.length > 0
         ? Math.min(...cleanVariants.map((v) => v.price))
@@ -127,13 +127,12 @@ export default function ProductForm() {
         cover_image_url: form.cover_image_url,
         gallery_urls: form.gallery_urls,
         storage_path: form.storage_path || null,
-        stripe_price_id: form.stripe_price_id || null,
         is_free: form.is_free,
         sold_out: form.sold_out,
         variants: cleanVariants,
       });
       if (error) throw error;
-      setForm({ name: '', slug: '', short_description: '', positioning_statement: '', what_this_is: '', included_items: '', audience: '', category: 'diy_kits', price: '', cover_image_url: '', gallery_urls: [], storage_path: '', stripe_price_id: '', is_free: false, sold_out: false, variants: [] });
+      setForm({ name: '', slug: '', short_description: '', positioning_statement: '', what_this_is: '', included_items: '', audience: '', category: 'diy_kits', price: '', cover_image_url: '', gallery_urls: [], storage_path: '', is_free: false, sold_out: false, variants: [] });
       setDone(true);
       qc.invalidateQueries({ queryKey: ['admin-products'] });
     } finally {
@@ -207,30 +206,16 @@ export default function ProductForm() {
         </div>
         <Switch checked={form.sold_out} onCheckedChange={(v) => setForm((f) => ({ ...f, sold_out: v }))} />
       </div>
-      {!form.is_free && form.variants.length === 0 && (
-        <div className="space-y-1.5">
-          <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Stripe price ID</Label>
-          <Input
-            value={form.stripe_price_id}
-            onChange={set('stripe_price_id')}
-            placeholder="price_1AbCdEfGhIjKlMn"
-            className="bg-background rounded-none font-mono text-sm"
-          />
-          <p className="text-xs font-sans text-muted-foreground/70">
-            Create a matching Product + Price in the Stripe Dashboard first, then paste the Price ID here. Required before this can be purchased.
-          </p>
-        </div>
-      )}
       {!form.is_free && (
         <div className="space-y-2">
           <div>
             <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Pricing options</Label>
             <p className="text-xs font-sans text-muted-foreground/70 mt-1">
-              E.g. an Ebook option at £65 and an Ebook + Print option at £95 — each needs its own Stripe price. The cheapest option here is what shows in the shop grid.
+              E.g. an Ebook option at £65 and an Ebook + Print option at £95. The cheapest option here is what shows in the shop grid.
             </p>
           </div>
           {form.variants.map((v) => (
-            <div key={v.id} className="grid grid-cols-1 sm:grid-cols-[2fr_1fr_2fr_auto] gap-2 items-start bg-muted/50 p-3">
+            <div key={v.id} className="grid grid-cols-1 sm:grid-cols-[2fr_1fr_auto] gap-2 items-start bg-muted/50 p-3">
               <Input
                 placeholder="Label, e.g. Ebook + Print"
                 value={v.label}
@@ -244,12 +229,6 @@ export default function ProductForm() {
                 value={v.price}
                 onChange={(e) => updateVariant(v.id, 'price', e.target.value)}
                 className="bg-background rounded-none"
-              />
-              <Input
-                placeholder="Stripe price ID"
-                value={v.stripe_price_id}
-                onChange={(e) => updateVariant(v.id, 'stripe_price_id', e.target.value)}
-                className="bg-background rounded-none font-mono text-xs"
               />
               <button type="button" onClick={() => removeVariant(v.id)} className="p-2 text-muted-foreground hover:text-destructive transition-colors">
                 <X className="w-4 h-4" />
@@ -354,7 +333,7 @@ export function ProductsList() {
             <div>
               <p className="font-sans text-sm font-medium text-foreground">{p.name}</p>
               <p className="font-mono text-xs text-muted-foreground">
-                £{p.price} · {p.category}{p.is_free ? ' · free' : ''}{p.sold_out ? ' · sold out' : ''}{hasVariants ? ` · ${p.variants.length} options` : ''}{!p.is_free && !hasVariants && !p.stripe_price_id ? ' · ⚠ no Stripe price' : ''}
+                £{p.price} · {p.category}{p.is_free ? ' · free' : ''}{p.sold_out ? ' · sold out' : ''}{hasVariants ? ` · ${p.variants.length} options` : ''}
               </p>
             </div>
             <button onClick={() => remove(p.id)} className="text-muted-foreground hover:text-destructive transition-colors">
