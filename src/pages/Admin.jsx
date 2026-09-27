@@ -9,6 +9,12 @@ import InviteAdmin from '@/components/admin/InviteAdmin';
 export default function Admin() {
   // AdminRoute (in App.jsx) already guarantees we only get here as a logged-in admin.
   const [tab, setTab] = useState('products');
+  const [editingProduct, setEditingProduct] = useState(null);
+
+  const changeTab = (id) => {
+    setTab(id);
+    setEditingProduct(null);
+  };
 
   return (
     <div className="px-6 lg:px-10 py-16 md:py-24">
@@ -37,7 +43,7 @@ export default function Admin() {
           ].map((t) => (
             <button
               key={t.id}
-              onClick={() => setTab(t.id)}
+              onClick={() => changeTab(t.id)}
               className={`font-mono text-xs tracking-widest uppercase pb-2 transition-colors ${
                 tab === t.id ? 'text-foreground border-b border-primary' : 'text-muted-foreground hover:text-foreground'
               }`}
@@ -59,13 +65,19 @@ export default function Admin() {
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
             <div className="lg:col-span-2">
-              {tab === 'products' ? <ProductForm /> : tab === 'posts' ? <PostForm /> : <PortfolioForm />}
+              {tab === 'products' ? (
+                <ProductForm editingProduct={editingProduct} onDone={() => setEditingProduct(null)} />
+              ) : tab === 'posts' ? (
+                <PostForm />
+              ) : (
+                <PortfolioForm />
+              )}
             </div>
             <div className="lg:border-l lg:border-border lg:pl-12">
               <p className="font-mono text-xs tracking-widest uppercase text-muted-foreground mb-5">
                 {tab === 'products' ? 'Existing products' : tab === 'posts' ? 'Existing posts' : 'Existing case studies'}
               </p>
-              {tab === 'products' ? <ProductsList /> : tab === 'posts' ? <PostsList /> : <PortfolioList />}
+              {tab === 'products' ? <ProductsList onEdit={setEditingProduct} /> : tab === 'posts' ? <PostsList /> : <PortfolioList />}
             </div>
           </div>
         )}
