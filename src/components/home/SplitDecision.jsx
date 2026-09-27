@@ -33,7 +33,6 @@ export default function SplitDecision() {
             }}
           />
           <div className="relative z-10">
-            <p className="font-mono text-xs tracking-widest uppercase text-primary-foreground/60 mb-8">01</p>
             <h3 className="font-display text-4xl md:text-5xl uppercase tracking-wide text-primary-foreground leading-[0.95] mb-6">
               Done for you
             </h3>
@@ -58,7 +57,6 @@ export default function SplitDecision() {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="bg-secondary/50 p-10 md:p-12 lg:p-16 rounded-[8px]"
         >
-          <p className="font-mono text-xs tracking-widest uppercase text-muted-foreground mb-8">02</p>
           <h3 className="font-display text-4xl md:text-5xl uppercase tracking-wide text-foreground leading-[0.95] mb-6">
             Do it yourself
           </h3>
