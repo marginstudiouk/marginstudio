@@ -257,7 +257,7 @@ export default function ProductForm({ editingProduct, onDone }) {
             </p>
           </div>
           {form.variants.map((v) => (
-            <div key={v.id} className="grid grid-cols-1 sm:grid-cols-[2fr_1fr_auto] gap-2 items-start bg-muted/50 p-3">
+            <div key={v.id} className="grid grid-cols-1 sm:grid-cols-[2fr_1fr_auto] gap-2 items-start bg-muted/50 p-3 rounded-[8px]">
               <Input
                 placeholder="Label, e.g. Ebook + Print"
                 value={v.label}

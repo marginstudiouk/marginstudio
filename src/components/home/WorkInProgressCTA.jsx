@@ -11,9 +11,8 @@ export default function WorkInProgressCTA() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
-        className="max-w-7xl mx-auto bg-secondary/50 p-10 md:p-16"
+        className="max-w-7xl mx-auto bg-secondary/50 p-10 md:p-16 rounded-[8px]"
       >
-        <span className="font-mono text-xs tracking-widest uppercase text-primary mb-4 block">Resources</span>
         <h2 className="font-display text-4xl md:text-5xl tracking-wide text-foreground leading-[0.9] mb-6">
           Still feel like a work in progress?
         </h2>

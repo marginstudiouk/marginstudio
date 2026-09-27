@@ -15,7 +15,6 @@ export default function Services() {
           transition={{ duration: 0.6 }}
           className="mb-20 max-w-2xl"
         >
-          <span className="font-mono text-xs tracking-widest uppercase text-primary mb-3 block">Studio</span>
           <h1 className="font-display text-6xl md:text-8xl tracking-wide text-foreground leading-[0.9] mb-6">
             Services
           </h1>
@@ -34,10 +33,7 @@ export default function Services() {
               viewport={{ once: true }}
               transition={{ duration: 0.45, delay: i * 0.05 }}
             >
-              <Link to={`/services/${service.slug}`} className="group bg-secondary/50 p-8 lg:p-10 h-full flex flex-col hover:bg-primary transition-colors">
-                <span className="font-mono text-xs text-primary group-hover:text-primary-foreground/70 tracking-widest block mb-6 transition-colors">
-                  {service.num}
-                </span>
+              <Link to={`/services/${service.slug}`} className="group bg-secondary/50 p-8 lg:p-10 h-full flex flex-col hover:bg-primary transition-colors rounded-[8px]">
                 <h3 className="font-display text-2xl md:text-3xl uppercase tracking-wide text-foreground group-hover:text-primary-foreground leading-none mb-4 transition-colors">
                   {service.name}
                 </h3>
@@ -62,7 +58,6 @@ export default function Services() {
           className="mt-16 pt-16 grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-center"
         >
           <div className="md:col-span-8">
-            <p className="font-mono text-xs tracking-widest uppercase text-primary mb-3">Shop</p>
             <h2 className="font-display text-3xl md:text-4xl tracking-wide text-foreground leading-[0.95] mb-4">
               Premade book covers
             </h2>

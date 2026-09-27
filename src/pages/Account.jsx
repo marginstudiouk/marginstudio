@@ -56,7 +56,6 @@ export default function Account() {
           transition={{ duration: 0.6 }}
           className="mb-16"
         >
-          <span className="font-mono text-xs tracking-widest uppercase text-primary mb-3 block">Account</span>
           <h1 className="font-display text-5xl md:text-6xl tracking-wide text-foreground leading-[0.9] mb-2">
             Your account
           </h1>
@@ -126,7 +125,7 @@ export default function Account() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.15 }}
-            className="bg-secondary/50 p-8"
+            className="bg-secondary/50 p-8 rounded-[8px]"
           >
             <Download className="w-5 h-5 text-primary mb-5" />
             <h2 className="font-sans text-lg font-semibold text-foreground mb-2">Your downloads</h2>
@@ -143,7 +142,7 @@ export default function Account() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-secondary/50 p-8"
+            className="bg-secondary/50 p-8 rounded-[8px]"
           >
             <LogOut className="w-5 h-5 text-primary mb-5" />
             <h2 className="font-sans text-lg font-semibold text-foreground mb-2">Sign out</h2>

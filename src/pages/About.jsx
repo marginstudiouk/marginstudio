@@ -21,7 +21,6 @@ export default function About() {
           transition={{ duration: 0.6 }}
           className="mb-20 max-w-2xl"
         >
-          <span className="font-mono text-xs tracking-widest uppercase text-primary mb-3 block">Studio</span>
           <h1 className="font-display text-5xl md:text-7xl tracking-wide text-foreground leading-[0.9] mb-10">
             It's time to<br /><span className="text-primary">find</span> your<br />readers.
           </h1>
@@ -66,7 +65,7 @@ export default function About() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="bg-secondary/50 p-10 md:p-14"
+          className="bg-secondary/50 p-10 md:p-14 rounded-[8px]"
         >
           <h2 className="font-display text-3xl md:text-4xl tracking-wide text-foreground leading-[0.9] mb-4">
             Want to work<br />together?

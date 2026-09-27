@@ -43,7 +43,6 @@ export default function Library() {
     <div className="px-6 lg:px-10 py-16 md:py-24">
       <div className="max-w-4xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="mb-16">
-          <span className="font-mono text-xs tracking-widest uppercase text-primary mb-3 block">Account</span>
           <h1 className="font-display text-6xl md:text-8xl tracking-wide text-foreground leading-[0.9] mb-4">
             My<br />Resources
           </h1>

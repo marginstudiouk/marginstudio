@@ -32,7 +32,6 @@ export default function ForgotPassword() {
     <div className="px-6 lg:px-10 py-16 md:py-24">
       <div className="max-w-sm mx-auto">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="mb-10">
-          <span className="font-mono text-xs tracking-widest uppercase text-primary mb-3 block">Account</span>
           <h1 className="font-display text-4xl md:text-5xl tracking-wide text-foreground leading-[0.9] mb-2">Reset password</h1>
         </motion.div>
 

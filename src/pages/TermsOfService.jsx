@@ -11,7 +11,6 @@ export default function TermsOfService() {
           transition={{ duration: 0.6 }}
           className="mb-16"
         >
-          <span className="font-mono text-xs tracking-widest uppercase text-primary mb-3 block">Legal</span>
           <h1 className="font-display text-5xl md:text-7xl tracking-wide text-foreground leading-[0.9] mb-6">
             Terms of Service
           </h1>

@@ -24,7 +24,6 @@ export default function FeaturedProducts() {
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-14">
           <div className="max-w-xl">
-            <p className="font-mono text-xs tracking-widest uppercase text-primary mb-3">Shop</p>
             <h2 className="font-display text-4xl md:text-5xl tracking-wide text-foreground leading-[0.95] mb-5 whitespace-nowrap">
               Prefer something ready-made?
             </h2>

@@ -46,7 +46,6 @@ export default function Shop() {
           transition={{ duration: 0.6 }}
           className="mb-16 relative"
         >
-          <span className="font-mono text-xs tracking-widest uppercase text-primary mb-3 block">Shop</span>
           <h1 className="font-display text-6xl md:text-8xl tracking-wide text-foreground mb-4 leading-[0.9]">
             Shop
           </h1>

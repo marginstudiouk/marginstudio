@@ -27,9 +27,6 @@ export default function Resources() {
           transition={{ duration: 0.6 }}
           className="mb-16"
         >
-          <span className="font-mono text-xs tracking-widest uppercase text-primary mb-3 block">
-            Free resources
-          </span>
           <h1 className="font-display text-6xl md:text-8xl tracking-wide text-foreground mb-4 leading-[0.9]">
             Resources
           </h1>

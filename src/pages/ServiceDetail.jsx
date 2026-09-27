@@ -39,7 +39,6 @@ export default function ServiceDetail() {
           transition={{ duration: 0.6 }}
           className="mb-16"
         >
-          <span className="font-mono text-xs tracking-widest uppercase text-primary mb-3 block">{service.num} Service</span>
           <h1 className="font-display text-5xl md:text-7xl tracking-wide text-foreground leading-[0.9] mb-6">
             {service.name}
           </h1>
@@ -119,7 +118,7 @@ export default function ServiceDetail() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="bg-secondary/50 p-10 md:p-14 mb-16"
+          className="bg-secondary/50 p-10 md:p-14 mb-16 rounded-[8px]"
         >
           <h2 className="font-display text-3xl md:text-4xl tracking-wide text-foreground leading-[0.9] mb-4">
             Interested in<br />{service.name.toLowerCase()}?

@@ -70,9 +70,6 @@ export default function CaseStudy() {
           transition={{ duration: 0.6 }}
           className="mb-12"
         >
-          <span className="font-mono text-xs tracking-widest uppercase text-primary mb-3 block">
-            Case study
-          </span>
           {item.client && (
             <p className="font-mono text-xs tracking-widest uppercase text-muted-foreground mb-3">
               {item.client}
@@ -135,7 +132,7 @@ export default function CaseStudy() {
           </motion.div>
         )}
 
-        <div className="bg-secondary/50 p-10 md:p-14 mt-20">
+        <div className="bg-secondary/50 p-10 md:p-14 mt-20 rounded-[8px]">
           <h2 className="font-display text-3xl md:text-4xl tracking-wide text-foreground leading-[0.9] mb-4">
             Work with us
           </h2>

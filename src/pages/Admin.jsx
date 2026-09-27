@@ -29,7 +29,6 @@ export default function Admin() {
           transition={{ duration: 0.6 }}
           className="mb-12"
         >
-          <span className="font-mono text-xs tracking-widest uppercase text-primary mb-3 block">CMS</span>
           <h1 className="font-display text-4xl md:text-5xl tracking-wide text-foreground leading-[0.9] mb-2">
             Studio admin
           </h1>

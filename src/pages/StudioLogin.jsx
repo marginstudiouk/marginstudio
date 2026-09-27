@@ -30,7 +30,6 @@ export default function StudioLogin() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-6">
       <div className="max-w-sm w-full">
-        <p className="font-mono text-xs tracking-widest uppercase text-primary mb-3 text-center">Margin Studio</p>
         <h1 className="font-display text-3xl tracking-wide text-foreground text-center mb-10">Studio Admin</h1>
         <form onSubmit={handleSubmit} className="space-y-5">
           {error && <p className="text-sm font-sans text-destructive">{error}</p>}

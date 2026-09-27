@@ -68,7 +68,6 @@ export default function Contact() {
           transition={{ duration: 0.6 }}
           className="mb-14"
         >
-          <span className="font-mono text-xs tracking-widest uppercase text-primary mb-3 block">Studio</span>
           <h1 className="font-display text-5xl md:text-7xl tracking-wide text-foreground leading-[0.9] mb-6">
             Contact
           </h1>
@@ -82,7 +81,7 @@ export default function Contact() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="bg-secondary/50 p-10 text-center"
+            className="bg-secondary/50 p-10 text-center rounded-[8px]"
           >
             <div className="w-10 h-10 mx-auto mb-5 flex items-center justify-center bg-primary">
               <Check className="w-5 h-5 text-primary-foreground" />
