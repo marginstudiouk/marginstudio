@@ -19,12 +19,13 @@ const slugify = (s) =>
   s.toLowerCase().trim().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-');
 
 const categoryOptions = [
-  { value: 'launch_kits', label: 'Launch kits' },
-  { value: 'content_systems', label: 'Content systems' },
-  { value: 'branding_kits', label: 'Branding kits' },
+  { value: 'diy_kits', label: 'DIY Kits' },
   { value: 'templates', label: 'Templates' },
-  { value: 'premade_covers', label: 'Premade covers' },
+  { value: 'premade_covers', label: 'Premade Covers' },
+  { value: 'elements', label: 'Elements' },
 ];
+
+const emptyVariant = () => ({ id: crypto.randomUUID(), label: '', price: '', stripe_price_id: '' });
 
 export default function ProductForm() {
   const qc = useQueryClient();
@@ -35,11 +36,17 @@ export default function ProductForm() {
   const [galleryUploading, setGalleryUploading] = useState(false);
   const [form, setForm] = useState({
     name: '', slug: '', short_description: '', positioning_statement: '', what_this_is: '',
-    included_items: '', audience: '', category: 'templates', price: '', cover_image_url: '',
-    gallery_urls: [], storage_path: '', stripe_price_id: '', is_free: false,
+    included_items: '', audience: '', category: 'diy_kits', price: '', cover_image_url: '',
+    gallery_urls: [], storage_path: '', stripe_price_id: '', is_free: false, sold_out: false,
+    variants: [],
   });
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
+
+  const addVariant = () => setForm((f) => ({ ...f, variants: [...f.variants, emptyVariant()] }));
+  const removeVariant = (id) => setForm((f) => ({ ...f, variants: f.variants.filter((v) => v.id !== id) }));
+  const updateVariant = (id, field, value) =>
+    setForm((f) => ({ ...f, variants: f.variants.map((v) => (v.id === id ? { ...v, [field]: value } : v)) }));
 
   const handleCoverUpload = async (e) => {
     const file = e.target.files?.[0];
@@ -99,6 +106,10 @@ export default function ProductForm() {
     setSaving(true);
     setDone(false);
     try {
+      const cleanVariants = form.variants
+        .filter((v) => v.label && v.price && v.stripe_price_id)
+        .map((v) => ({ id: v.id, label: v.label, price: Number(v.price), stripe_price_id: v.stripe_price_id }));
+
       const { error } = await supabase.from('products').insert({
         name: form.name,
         slug: form.slug || slugify(form.name),
@@ -114,9 +125,11 @@ export default function ProductForm() {
         storage_path: form.storage_path || null,
         stripe_price_id: form.stripe_price_id || null,
         is_free: form.is_free,
+        sold_out: form.sold_out,
+        variants: cleanVariants,
       });
       if (error) throw error;
-      setForm({ name: '', slug: '', short_description: '', positioning_statement: '', what_this_is: '', included_items: '', audience: '', category: 'templates', price: '', cover_image_url: '', gallery_urls: [], storage_path: '', stripe_price_id: '', is_free: false });
+      setForm({ name: '', slug: '', short_description: '', positioning_statement: '', what_this_is: '', included_items: '', audience: '', category: 'diy_kits', price: '', cover_image_url: '', gallery_urls: [], storage_path: '', stripe_price_id: '', is_free: false, sold_out: false, variants: [] });
       setDone(true);
       qc.invalidateQueries({ queryKey: ['admin-products'] });
     } finally {
@@ -170,6 +183,7 @@ export default function ProductForm() {
         <div className="space-y-1.5">
           <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Price (GBP) *</Label>
           <Input required type="number" step="0.01" value={form.price} onChange={set('price')} className="bg-background rounded-none" />
+          <p className="text-xs font-sans text-muted-foreground/70">If you add pricing options below, this is just the "from" price shown in the shop grid.</p>
         </div>
       </div>
       <div className="flex items-center justify-between py-2">
@@ -178,6 +192,15 @@ export default function ProductForm() {
           <p className="text-xs font-sans text-muted-foreground/70 mt-1">Shows on the Resources page instead of the Shop.</p>
         </div>
         <Switch checked={form.is_free} onCheckedChange={(v) => setForm((f) => ({ ...f, is_free: v }))} />
+      </div>
+      <div className="flex items-center justify-between py-2">
+        <div>
+          <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Sold out</Label>
+          <p className="text-xs font-sans text-muted-foreground/70 mt-1">
+            Hides the buy button and shows "Sold out". Premade covers get this set automatically the moment they sell — this toggle is for manual overrides.
+          </p>
+        </div>
+        <Switch checked={form.sold_out} onCheckedChange={(v) => setForm((f) => ({ ...f, sold_out: v }))} />
       </div>
       {!form.is_free && (
         <div className="space-y-1.5">
@@ -189,8 +212,52 @@ export default function ProductForm() {
             className="bg-background rounded-none font-mono text-sm"
           />
           <p className="text-xs font-sans text-muted-foreground/70">
-            Create a matching Product + Price in the Stripe Dashboard first, then paste the Price ID here. Required before this can be purchased.
+            Only needed if this product has a single price (no options below). Create a matching Product + Price in the Stripe Dashboard first, then paste the Price ID here.
           </p>
+        </div>
+      )}
+      {!form.is_free && (
+        <div className="space-y-2">
+          <div>
+            <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Pricing options</Label>
+            <p className="text-xs font-sans text-muted-foreground/70 mt-1">
+              E.g. a premade cover sold as "Ebook" (£45) or "Ebook + Print" (£75) — each needs its own Stripe price. Leave empty to just use the single Stripe price ID above.
+            </p>
+          </div>
+          {form.variants.map((v) => (
+            <div key={v.id} className="grid grid-cols-1 sm:grid-cols-[2fr_1fr_2fr_auto] gap-2 items-start bg-muted/50 p-3">
+              <Input
+                placeholder="Label, e.g. Ebook + Print"
+                value={v.label}
+                onChange={(e) => updateVariant(v.id, 'label', e.target.value)}
+                className="bg-background rounded-none"
+              />
+              <Input
+                type="number"
+                step="0.01"
+                placeholder="Price"
+                value={v.price}
+                onChange={(e) => updateVariant(v.id, 'price', e.target.value)}
+                className="bg-background rounded-none"
+              />
+              <Input
+                placeholder="Stripe price ID"
+                value={v.stripe_price_id}
+                onChange={(e) => updateVariant(v.id, 'stripe_price_id', e.target.value)}
+                className="bg-background rounded-none font-mono text-xs"
+              />
+              <button type="button" onClick={() => removeVariant(v.id)} className="p-2 text-muted-foreground hover:text-destructive transition-colors">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={addVariant}
+            className="font-mono text-xs tracking-widest uppercase text-primary hover:underline"
+          >
+            + Add pricing option
+          </button>
         </div>
       )}
       <div className="space-y-1.5">
@@ -275,19 +342,22 @@ export function ProductsList() {
 
   return (
     <div className="space-y-2">
-      {products.map((p) => (
-        <div key={p.id} className="flex items-center justify-between py-3">
-          <div>
-            <p className="font-sans text-sm font-medium text-foreground">{p.name}</p>
-            <p className="font-mono text-xs text-muted-foreground">
-              £{p.price} · {p.category}{p.is_free ? ' · free' : ''}{!p.is_free && !p.stripe_price_id ? ' · ⚠ no Stripe price' : ''}
-            </p>
+      {products.map((p) => {
+        const hasVariants = Array.isArray(p.variants) && p.variants.length > 0;
+        return (
+          <div key={p.id} className="flex items-center justify-between py-3">
+            <div>
+              <p className="font-sans text-sm font-medium text-foreground">{p.name}</p>
+              <p className="font-mono text-xs text-muted-foreground">
+                £{p.price} · {p.category}{p.is_free ? ' · free' : ''}{p.sold_out ? ' · sold out' : ''}{hasVariants ? ` · ${p.variants.length} options` : ''}{!p.is_free && !hasVariants && !p.stripe_price_id ? ' · ⚠ no Stripe price' : ''}
+              </p>
+            </div>
+            <button onClick={() => remove(p.id)} className="text-muted-foreground hover:text-destructive transition-colors">
+              <Trash2 className="w-4 h-4" />
+            </button>
           </div>
-          <button onClick={() => remove(p.id)} className="text-muted-foreground hover:text-destructive transition-colors">
-            <Trash2 className="w-4 h-4" />
-          </button>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

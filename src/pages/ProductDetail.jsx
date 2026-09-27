@@ -8,11 +8,10 @@ import { useNavigate, Link, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
 const categoryLabels = {
-  launch_kits: 'Launch kit',
-  content_systems: 'Content system',
-  branding_kits: 'Branding kit',
+  diy_kits: 'DIY Kit',
   templates: 'Template',
-  premade_covers: 'Premade cover',
+  premade_covers: 'Premade Cover',
+  elements: 'Elements',
 };
 
 export default function ProductDetail() {
@@ -20,6 +19,7 @@ export default function ProductDetail() {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
   const [purchasing, setPurchasing] = useState(false);
+  const [selectedVariantId, setSelectedVariantId] = useState(null);
 
   const { data: product, isLoading } = useQuery({
     queryKey: ['product', slug],
@@ -30,9 +30,18 @@ export default function ProductDetail() {
     },
   });
 
+  const variants = Array.isArray(product?.variants) ? product.variants : [];
+  const hasVariants = variants.length > 0;
+  const selectedVariant = variants.find((v) => v.id === selectedVariantId) || null;
+
   const handlePurchase = async () => {
     if (!isAuthenticated) {
       navigate('/login', { state: { from: `/product/${slug}` } });
+      return;
+    }
+
+    if (hasVariants && !selectedVariantId) {
+      toast.error('Please choose an option first.');
       return;
     }
 
@@ -40,10 +49,11 @@ export default function ProductDetail() {
     try {
       const { url } = await callFunction('create-checkout-session', {
         product_id: product.id,
+        variant_id: selectedVariantId || undefined,
         origin: window.location.origin,
       });
       if (url) {
-        window.location.href = url; // hand off to Stripe Checkout
+        window.location.href = url;
       } else {
         throw new Error('No checkout URL returned');
       }
@@ -69,6 +79,12 @@ export default function ProductDetail() {
     );
   }
 
+  const displayPrice = selectedVariant
+    ? selectedVariant.price
+    : hasVariants
+    ? Math.min(...variants.map((v) => Number(v.price) || 0))
+    : product.price;
+
   return (
     <div className="px-6 lg:px-10 py-16 md:py-24">
       <div className="max-w-5xl mx-auto">
@@ -76,10 +92,21 @@ export default function ProductDetail() {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>
             <div className="aspect-[4/3] bg-secondary/50 overflow-hidden relative">
               {product.cover_image_url ? (
-                <img src={product.cover_image_url} alt={product.name} className="w-full h-full object-cover" />
+                <img
+                  src={product.cover_image_url}
+                  alt={product.name}
+                  className={`w-full h-full object-cover ${product.sold_out ? 'opacity-50 grayscale' : ''}`}
+                />
               ) : (
                 <div className="w-full h-full flex items-center justify-center grid-overlay">
                   <span className="font-display text-3xl uppercase text-muted-foreground tracking-wide">{product.name}</span>
+                </div>
+              )}
+              {product.sold_out && (
+                <div className="absolute inset-0 flex items-center justify-center bg-background/40">
+                  <span className="font-mono text-sm tracking-widest uppercase bg-foreground text-background px-4 py-2">
+                    Sold out
+                  </span>
                 </div>
               )}
             </div>
@@ -91,7 +118,11 @@ export default function ProductDetail() {
                 {categoryLabels[product.category] || product.category?.replace(/_/g, ' ')}
               </p>
               <h1 className="font-sans text-2xl md:text-3xl font-semibold text-foreground mb-4 leading-snug">{product.name}</h1>
-              <p className="font-mono text-xl text-gold">£{product.price}</p>
+              {!product.sold_out && (
+                <p className="font-mono text-xl text-gold">
+                  {hasVariants && !selectedVariant ? `From £${displayPrice}` : `£${displayPrice}`}
+                </p>
+              )}
             </div>
 
             {product.positioning_statement && (
@@ -128,6 +159,29 @@ export default function ProductDetail() {
               </div>
             )}
 
+            {hasVariants && !product.sold_out && (
+              <div>
+                <p className="font-mono text-xs tracking-widest uppercase text-muted-foreground mb-4">Choose an option</p>
+                <div className="space-y-2">
+                  {variants.map((v) => (
+                    <button
+                      key={v.id}
+                      type="button"
+                      onClick={() => setSelectedVariantId(v.id)}
+                      className={`w-full flex items-center justify-between px-4 py-3 border text-left transition-colors ${
+                        selectedVariantId === v.id
+                          ? 'border-primary bg-primary/5'
+                          : 'border-border hover:border-muted-foreground'
+                      }`}
+                    >
+                      <span className="text-sm font-sans text-foreground">{v.label}</span>
+                      <span className="font-mono text-sm text-gold">£{v.price}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {product.is_free ? (
               <div className="w-full bg-secondary/50 px-6 py-5 text-center">
                 <p className="font-mono text-xs tracking-widest uppercase text-muted-foreground mb-3">This is a free resource</p>
@@ -135,10 +189,14 @@ export default function ProductDetail() {
                   Get it on the resources page
                 </Link>
               </div>
+            ) : product.sold_out ? (
+              <div className="w-full bg-secondary/50 px-6 py-5 text-center">
+                <p className="font-mono text-xs tracking-widest uppercase text-muted-foreground">This item has sold</p>
+              </div>
             ) : (
               <button
                 onClick={handlePurchase}
-                disabled={purchasing}
+                disabled={purchasing || (hasVariants && !selectedVariantId)}
                 className="w-full bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-60 transition-colors py-4 font-mono text-xs tracking-widest uppercase flex items-center justify-center gap-2"
               >
                 {purchasing ? (

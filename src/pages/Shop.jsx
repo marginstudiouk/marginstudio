@@ -7,11 +7,10 @@ import ProductCard from '../components/shared/ProductCard';
 
 const categories = [
   { value: 'all', label: 'All' },
-  { value: 'launch_kits', label: 'Launch kits' },
-  { value: 'content_systems', label: 'Content systems' },
-  { value: 'branding_kits', label: 'Branding kits' },
+  { value: 'diy_kits', label: 'DIY Kits' },
   { value: 'templates', label: 'Templates' },
-  { value: 'premade_covers', label: 'Premade covers' },
+  { value: 'premade_covers', label: 'Premade Covers' },
+  { value: 'elements', label: 'Elements' },
 ];
 
 export default function Shop() {

@@ -58,7 +58,6 @@ Deno.serve(async (req) => {
       return new Response("Missing metadata", { status: 400 });
     }
 
-    // Idempotency: if we've already recorded this session, do nothing further.
     const { data: existing } = await supabaseAdmin
       .from("purchases")
       .select("id")
@@ -80,6 +79,19 @@ Deno.serve(async (req) => {
       if (insertError) {
         console.error("Failed to insert purchase:", insertError);
         return new Response("DB insert failed", { status: 500 });
+      }
+
+      const { data: productRow } = await supabaseAdmin
+        .from("products")
+        .select("category")
+        .eq("id", product_id)
+        .single();
+
+      if (productRow?.category === "premade_covers") {
+        await supabaseAdmin
+          .from("products")
+          .update({ sold_out: true })
+          .eq("id", product_id);
       }
 
       const customerEmail = session.customer_email ?? session.customer_details?.email;
