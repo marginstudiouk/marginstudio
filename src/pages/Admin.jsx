@@ -10,10 +10,14 @@ export default function Admin() {
   // AdminRoute (in App.jsx) already guarantees we only get here as a logged-in admin.
   const [tab, setTab] = useState('products');
   const [editingProduct, setEditingProduct] = useState(null);
+  const [editingPost, setEditingPost] = useState(null);
+  const [editingItem, setEditingItem] = useState(null);
 
   const changeTab = (id) => {
     setTab(id);
     setEditingProduct(null);
+    setEditingPost(null);
+    setEditingItem(null);
   };
 
   return (
@@ -68,16 +72,22 @@ export default function Admin() {
               {tab === 'products' ? (
                 <ProductForm editingProduct={editingProduct} onDone={() => setEditingProduct(null)} />
               ) : tab === 'posts' ? (
-                <PostForm />
+                <PostForm editingPost={editingPost} onDone={() => setEditingPost(null)} />
               ) : (
-                <PortfolioForm />
+                <PortfolioForm editingItem={editingItem} onDone={() => setEditingItem(null)} />
               )}
             </div>
             <div className="lg:border-l lg:border-border lg:pl-12">
               <p className="font-mono text-xs tracking-widest uppercase text-muted-foreground mb-5">
                 {tab === 'products' ? 'Existing products' : tab === 'posts' ? 'Existing posts' : 'Existing case studies'}
               </p>
-              {tab === 'products' ? <ProductsList onEdit={setEditingProduct} /> : tab === 'posts' ? <PostsList /> : <PortfolioList />}
+              {tab === 'products' ? (
+                <ProductsList onEdit={setEditingProduct} />
+              ) : tab === 'posts' ? (
+                <PostsList onEdit={setEditingPost} />
+              ) : (
+                <PortfolioList onEdit={setEditingItem} />
+              )}
             </div>
           </div>
         )}

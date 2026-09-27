@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Loader2, Trash2, Plus, X } from 'lucide-react';
+import { Loader2, Trash2, Plus, X, Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -26,16 +26,34 @@ const serviceOptions = [
   { value: 'websites', label: 'Websites' },
 ];
 
-export default function PortfolioForm() {
+const emptyForm = {
+  name: '', slug: '', client: '', service_type: 'branding',
+  cover_image_url: '', gallery_urls: [], excerpt: '', content: '',
+};
+
+const itemToForm = (p) => ({
+  name: p.name || '',
+  slug: p.slug || '',
+  client: p.client || '',
+  service_type: p.service_type || 'branding',
+  cover_image_url: p.cover_image_url || '',
+  gallery_urls: p.gallery_urls || [],
+  excerpt: p.excerpt || '',
+  content: p.content || '',
+});
+
+export default function PortfolioForm({ editingItem, onDone }) {
   const qc = useQueryClient();
   const [saving, setSaving] = useState(false);
   const [done, setDone] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [galleryUploading, setGalleryUploading] = useState(false);
-  const [form, setForm] = useState({
-    name: '', slug: '', client: '', service_type: 'branding',
-    cover_image_url: '', gallery_urls: [], excerpt: '', content: '',
-  });
+  const [form, setForm] = useState(emptyForm);
+
+  React.useEffect(() => {
+    setForm(editingItem ? itemToForm(editingItem) : emptyForm);
+    setDone(false);
+  }, [editingItem]);
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
@@ -83,7 +101,7 @@ export default function PortfolioForm() {
     setSaving(true);
     setDone(false);
     try {
-      const { error } = await supabase.from('portfolio').insert({
+      const payload = {
         name: form.name,
         slug: form.slug || slugify(form.name),
         client: form.client,
@@ -92,11 +110,20 @@ export default function PortfolioForm() {
         gallery_urls: form.gallery_urls,
         excerpt: form.excerpt,
         content: form.content,
-      });
+      };
+
+      const { error } = editingItem
+        ? await supabase.from('portfolio').update(payload).eq('id', editingItem.id)
+        : await supabase.from('portfolio').insert(payload);
+
       if (error) throw error;
-      setForm({ name: '', slug: '', client: '', service_type: 'branding', cover_image_url: '', gallery_urls: [], excerpt: '', content: '' });
       setDone(true);
       qc.invalidateQueries({ queryKey: ['admin-portfolio'] });
+      if (editingItem) {
+        onDone?.();
+      } else {
+        setForm(emptyForm);
+      }
     } finally {
       setSaving(false);
     }
@@ -104,7 +131,15 @@ export default function PortfolioForm() {
 
   return (
     <form onSubmit={submit} className="space-y-6">
-      {done && <p className="text-sm font-sans text-primary">Case study saved.</p>}
+      {editingItem && (
+        <div className="flex items-center justify-between bg-primary/5 border border-primary/30 px-4 py-3">
+          <p className="font-mono text-xs tracking-widest uppercase text-primary">Editing "{editingItem.name}"</p>
+          <button type="button" onClick={() => onDone?.()} className="font-mono text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground">
+            Cancel
+          </button>
+        </div>
+      )}
+      {done && <p className="text-sm font-sans text-primary">{editingItem ? 'Case study updated.' : 'Case study saved.'}</p>}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div className="space-y-1.5">
           <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Project name *</Label>
@@ -179,13 +214,13 @@ export default function PortfolioForm() {
       </div>
       <Button type="submit" disabled={saving} className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-none font-mono text-xs tracking-widest uppercase px-6 py-4 disabled:opacity-60">
         {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Plus className="w-4 h-4 mr-2" />}
-        Save case study
+        {editingItem ? 'Update case study' : 'Save case study'}
       </Button>
     </form>
   );
 }
 
-export function PortfolioList() {
+export function PortfolioList({ onEdit }) {
   const { data: items = [] } = useQuery({
     queryKey: ['admin-portfolio'],
     queryFn: async () => {
@@ -214,9 +249,14 @@ export function PortfolioList() {
               {p.client ? `${p.client} · ` : ''}{p.service_type}
             </p>
           </div>
-          <button onClick={() => remove(p.id)} className="text-muted-foreground hover:text-destructive transition-colors">
-            <Trash2 className="w-4 h-4" />
-          </button>
+          <div className="flex items-center gap-3">
+            <button onClick={() => onEdit?.(p)} className="text-muted-foreground hover:text-primary transition-colors">
+              <Pencil className="w-4 h-4" />
+            </button>
+            <button onClick={() => remove(p.id)} className="text-muted-foreground hover:text-destructive transition-colors">
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       ))}
     </div>
