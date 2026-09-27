@@ -63,7 +63,7 @@ export default function Journal() {
                       />
                     </div>
                   ) : (
-                    <div className="aspect-[4/3] bg-secondary/50 flex items-center justify-center p-8">
+                    <div className="aspect-[4/3] bg-secondary/50 flex items-center justify-center p-8 rounded-[8px]">
                       <span className="font-display text-2xl uppercase tracking-wide text-muted-foreground/60 text-center">{post.title}</span>
                     </div>
                   )}

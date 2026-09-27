@@ -77,7 +77,7 @@ export default function Services() {
               <ArrowRight className="w-3.5 h-3.5 ml-2 transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
-          <div className="md:col-span-4 aspect-[3/4] overflow-hidden bg-secondary/50">
+          <div className="md:col-span-4 aspect-[3/4] overflow-hidden bg-secondary/50 rounded-[8px]">
             <img
               src="/images/services/book-covers.svg"
               alt="Premade book covers"

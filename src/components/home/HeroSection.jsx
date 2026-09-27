@@ -65,7 +65,7 @@ export default function HeroSection() {
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
           className="lg:col-span-6"
         >
-          <div className="relative aspect-[4/5] sm:aspect-[16/10] lg:aspect-[5/6] overflow-hidden bg-muted">
+          <div className="relative aspect-[4/5] sm:aspect-[16/10] lg:aspect-[5/6] overflow-hidden bg-muted rounded-[8px]">
             <img
               src="/images/hero.jpg"
               alt="A selection of book covers designed by the studio"

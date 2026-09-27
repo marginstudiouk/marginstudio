@@ -66,7 +66,7 @@ export default function JournalTeaser() {
               >
                 <Link to={`/journal/${post.slug}`} className="group block h-full flex flex-col">
                   {post.cover_image_url && (
-                    <div className="aspect-[4/3] overflow-hidden bg-secondary/50 mb-5">
+                    <div className="aspect-[4/3] overflow-hidden bg-secondary/50 mb-5 rounded-[8px]">
                       <img
                         src={post.cover_image_url}
                         alt={post.title}

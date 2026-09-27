@@ -53,7 +53,7 @@ export default function ServiceDetail() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
-          className="mb-20 overflow-hidden"
+          className="mb-20 overflow-hidden rounded-[8px]"
         >
           <img
             src={service.image}

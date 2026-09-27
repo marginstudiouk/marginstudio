@@ -190,7 +190,7 @@ export default function PortfolioForm({ editingItem, onDone }) {
         {form.gallery_urls.length > 0 && (
           <div className="grid grid-cols-3 gap-2 mb-3">
             {form.gallery_urls.map((url) => (
-              <div key={url} className="relative aspect-square bg-muted overflow-hidden group">
+              <div key={url} className="relative aspect-square bg-muted overflow-hidden group rounded-[8px]">
                 <img src={url} alt="" className="w-full h-full object-cover" />
                 <button
                   type="button"

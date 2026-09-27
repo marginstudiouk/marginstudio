@@ -24,7 +24,7 @@ export default function ProductCard({ product, index = 0 }) {
       transition={{ duration: 0.5, delay: index * 0.06 }}
     >
       <Link to={`/product/${product.slug}`} className="group block">
-        <div className="aspect-[4/3] bg-secondary/50 overflow-hidden mb-5 relative">
+        <div className="aspect-[4/3] bg-secondary/50 overflow-hidden mb-5 relative rounded-[8px]">
           {product.cover_image_url ? (
             <img
               src={product.cover_image_url}

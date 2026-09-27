@@ -90,7 +90,7 @@ export default function ProductDetail() {
       <div className="max-w-5xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>
-            <div className="aspect-[4/3] bg-secondary/50 overflow-hidden relative">
+            <div className="aspect-[4/3] bg-secondary/50 overflow-hidden relative rounded-[8px]">
               {product.cover_image_url ? (
                 <img
                   src={product.cover_image_url}

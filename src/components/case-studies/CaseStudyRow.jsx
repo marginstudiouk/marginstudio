@@ -38,7 +38,7 @@ export default function CaseStudyRow({ serviceType }) {
           >
             <Link
               to={`/case-studies/${item.slug}`}
-              className="group block relative aspect-square overflow-hidden bg-secondary/50"
+              className="group block relative aspect-square overflow-hidden bg-secondary/50 rounded-[8px]"
             >
               {item.cover_image_url ? (
                 <img

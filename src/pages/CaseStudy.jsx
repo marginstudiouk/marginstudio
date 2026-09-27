@@ -94,7 +94,7 @@ export default function CaseStudy() {
           transition={{ duration: 0.7 }}
           className="mb-16 overflow-hidden"
         >
-          <div className="aspect-[16/10] bg-secondary/50 overflow-hidden">
+          <div className="aspect-[16/10] bg-secondary/50 overflow-hidden rounded-[8px]">
             {item.cover_image_url && (
               <img
                 src={item.cover_image_url}

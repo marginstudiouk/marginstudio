@@ -93,7 +93,7 @@ export default function Packages() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.08 }}
-              className={`flex flex-col p-8 lg:p-10 ${pkg.featured ? 'bg-primary text-primary-foreground' : 'bg-secondary/50 text-foreground'}`}
+              className={`flex flex-col p-8 lg:p-10 rounded-[8px] ${pkg.featured ? 'bg-primary text-primary-foreground' : 'bg-secondary/50 text-foreground'}`}
             >
               <h3 className={`font-sans text-lg font-semibold mb-2 ${pkg.featured ? 'text-primary-foreground' : 'text-foreground'}`}>
                 {pkg.name}
@@ -143,7 +143,7 @@ export default function Packages() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="bg-secondary/50 p-10 md:p-14"
+          className="bg-secondary/50 p-10 md:p-14 rounded-[8px]"
         >
           <h2 className="font-display text-3xl md:text-4xl tracking-wide text-foreground leading-[0.9] mb-4">
             Planning a larger<br />project?
