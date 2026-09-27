@@ -67,7 +67,7 @@ export default function HeroSection() {
         >
           <div className="relative aspect-[4/5] sm:aspect-[16/10] lg:aspect-[5/6] overflow-hidden bg-muted">
             <img
-              src="/images/hero.svg"
+              src="/images/hero.jpg"
               alt="A selection of book covers designed by the studio"
               className="w-full h-full object-cover"
             />
