@@ -9,7 +9,7 @@ const stats = [
 
 export default function StatsBand() {
   return (
-    <section className="border-t border-border py-14 md:py-16 px-6 lg:px-10">
+    <section className="py-14 md:py-16 px-6 lg:px-10">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-6 text-center">
         {stats.map((s, i) => (
           <motion.div

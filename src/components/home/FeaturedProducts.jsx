@@ -20,7 +20,7 @@ export default function FeaturedProducts() {
   if (paid.length === 0) return null;
 
   return (
-    <section className="border-t border-border py-16 md:py-20 px-6 lg:px-10">
+    <section className="py-16 md:py-20 px-6 lg:px-10">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-14">
           <div className="max-w-xl">

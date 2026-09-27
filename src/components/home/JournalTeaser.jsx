@@ -27,7 +27,7 @@ export default function JournalTeaser() {
   if (!isLoading && posts.length === 0) return null;
 
   return (
-    <section className="border-t border-border px-6 lg:px-10 pt-16 md:pt-20 pb-16 md:pb-24">
+    <section className="px-6 lg:px-10 pt-16 md:pt-20 pb-16 md:pb-24">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-14">
           <div className="max-w-xl">

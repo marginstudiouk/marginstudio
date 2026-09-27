@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 
 export default function SplitDecision() {
   return (
-    <section className="border-t border-border py-16 md:py-20">
+    <section className="py-16 md:py-20">
       {/* Header */}
       <div className="max-w-7xl mx-auto px-6 lg:px-10 pb-16 md:pb-24 text-center">
         <h2 className="font-display text-4xl md:text-6xl tracking-wide text-foreground leading-[1] mb-4">
