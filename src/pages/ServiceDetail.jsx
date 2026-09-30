@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, ArrowLeft, Check } from 'lucide-react';
+import { ArrowRight, Check } from 'lucide-react';
 import { getServiceBySlug, services } from '@/lib/servicesData';
 import CaseStudyRow from '@/components/case-studies/CaseStudyRow';
 
@@ -24,14 +24,6 @@ export default function ServiceDetail() {
   return (
     <div className="px-6 lg:px-10 py-16 md:py-24">
       <div className="max-w-5xl mx-auto">
-        <Link
-          to="/services"
-          className="inline-flex items-center font-mono text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors mb-12 group"
-        >
-          <ArrowLeft className="w-3.5 h-3.5 mr-2 transition-transform group-hover:-translate-x-1" />
-          All services
-        </Link>
-
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

@@ -12,7 +12,7 @@ export const services = [
       { step: 'Guidelines & handover', detail: 'Everything is packaged into clear guidelines and editable templates you can use straight away.' },
     ],
     deliverables: ['Primary logo', 'Secondary logo', 'Submarks', 'Colour palette', 'Typography system', 'Brand guidelines', 'Social media templates', 'Media kit'],
-    related: { label: 'Author Branding Essentials', kind: 'package', path: '/packages' },
+    related: { label: 'Author Branding Essentials', kind: 'package', path: '/packages/author-branding-essentials' },
   },
   {
     slug: 'campaigns',
@@ -41,7 +41,7 @@ export const services = [
       { step: 'Engagement & growth', detail: 'We help you build genuine connection with your readers, not just numbers.' },
     ],
     deliverables: ['Content strategy', 'Post templates', 'Monthly content calendar', 'Community management guidance'],
-    related: { label: 'Social Media Retainer', kind: 'package', path: '/packages' },
+    related: { label: 'Social Media Retainer', kind: 'package', path: '/packages/social-media-retainer' },
   },
   {
     slug: 'email-marketing',

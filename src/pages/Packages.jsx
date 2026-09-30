@@ -2,51 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
-
-const packages = [
-  {
-    name: 'Author Branding Essentials',
-    price: '£300',
-    cadence: 'one-off',
-    description: 'A complete, considered brand foundation designed specifically for authors and literary projects.',
-    includes: [
-      'Primary logo',
-      'Secondary logo',
-      'Submarks',
-      'Colour palette',
-      'Typography',
-      'Social media templates (including post covers)',
-      'Media kit',
-      'Clear brand guidelines',
-    ],
-    note: 'Delivered fully packaged, including editable Canva templates for ease of use.',
-  },
-  {
-    name: 'Social Media Retainer',
-    price: '£250',
-    cadence: 'per month',
-    description: 'Consistent, professionally designed content to support your writing life and ongoing book promotion in a way that feels authentic and personal to you.',
-    includes: [
-      '16 feed posts per month',
-      'Content aligned with your brand, releases, and wider marketing activity',
-      'Stay visible without constant pressure to perform online',
-    ],
-    note: 'Three-month minimum commitment. Payment for retainers is monthly in advance.',
-    featured: true,
-  },
-  {
-    name: 'Custom Social Media Templates',
-    price: '£100',
-    cadence: 'one-off',
-    description: 'Flexible, ready-to-use templates for authors who want marketing assets tailored to their needs, not a one-size-fits-all look.',
-    includes: [
-      '10 custom-designed post templates',
-      'Shaped around your existing branding, tone, and platforms',
-      'Designed to slot into your wider marketing activity',
-    ],
-    note: 'Delivered in Canva for easy reuse and adaptation.',
-  },
-];
+import { packages } from '@/lib/packagesData';
 
 export default function Packages() {
   return (
@@ -95,7 +51,7 @@ export default function Packages() {
               className={`flex flex-col p-8 lg:p-10 rounded-[8px] ${pkg.featured ? 'bg-primary text-primary-foreground' : 'bg-secondary/50 text-foreground'}`}
             >
               <h3 className={`font-sans text-lg font-semibold mb-2 ${pkg.featured ? 'text-primary-foreground' : 'text-foreground'}`}>
-                {pkg.name}
+                <Link to={`/packages/${pkg.slug}`} className="hover:underline">{pkg.name}</Link>
               </h3>
               <div className="flex items-baseline gap-2 mb-6">
                 <span className={`font-mono text-2xl ${pkg.featured ? 'text-primary-foreground' : 'text-foreground'}`}>{pkg.price}</span>
@@ -123,8 +79,15 @@ export default function Packages() {
               )}
 
               <Link
+                to={`/packages/${pkg.slug}`}
+                className={`font-mono text-xs tracking-widest uppercase mb-4 hover:underline ${pkg.featured ? 'text-primary-foreground' : 'text-primary'}`}
+              >
+                View details
+              </Link>
+
+              <Link
                 to="/contact"
-                className={`font-mono text-xs tracking-widest uppercase text-center py-3 transition-colors mt-auto ${
+                className={`font-mono text-xs tracking-widest uppercase text-center py-3 transition-colors ${
                   pkg.featured
                     ? 'bg-primary-foreground text-primary hover:bg-primary-foreground/90'
                     : 'border border-primary text-primary hover:bg-primary hover:text-primary-foreground'
