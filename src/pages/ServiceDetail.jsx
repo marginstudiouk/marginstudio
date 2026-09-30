@@ -133,7 +133,7 @@ export default function ServiceDetail() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="bg-secondary/50 p-10 md:p-16 mb-20 rounded-[8px] text-center"
+          className="max-w-4xl mx-auto bg-secondary/50 p-10 md:p-16 mb-20 rounded-[8px] text-center"
         >
           <h2 className="font-display text-3xl md:text-5xl tracking-wide text-foreground leading-[0.95] mb-5">
             Interested in {service.name.toLowerCase()}?

@@ -87,7 +87,7 @@ export default function PackageDetail() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="bg-secondary/50 p-10 md:p-16 mb-16 rounded-[8px] text-center"
+          className="max-w-4xl mx-auto bg-secondary/50 p-10 md:p-16 mb-16 rounded-[8px] text-center"
         >
           <h2 className="font-display text-3xl md:text-4xl tracking-wide text-foreground leading-[0.9] mb-4">
             Interested in {pkg.name.toLowerCase()}?

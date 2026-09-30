@@ -81,7 +81,7 @@ export default function Contact() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="bg-secondary/50 p-10 text-center rounded-[8px]"
+            className="max-w-4xl mx-auto bg-secondary/50 p-10 text-center rounded-[8px]"
           >
             <div className="w-10 h-10 mx-auto mb-5 flex items-center justify-center bg-primary">
               <Check className="w-5 h-5 text-primary-foreground" />
