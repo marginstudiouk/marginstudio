@@ -7,8 +7,6 @@ import { packages } from '@/lib/packagesData';
 export default function Packages() {
   const navigate = useNavigate();
 
-  const goToPackage = (slug) => navigate(`/packages/${slug}`);
-
   return (
     <div className="px-6 lg:px-10 py-16 md:py-24">
       <div className="max-w-7xl mx-auto">
@@ -43,7 +41,7 @@ export default function Packages() {
           </p>
         </motion.div>
 
-        {/* Packages grid — the whole card is clickable through to its own page */}
+        {/* Packages grid — same pattern as the Services grid: the whole card is one Link */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mb-20">
           {packages.map((pkg, i) => (
             <motion.div
@@ -52,54 +50,58 @@ export default function Packages() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.08 }}
-              onClick={() => goToPackage(pkg.slug)}
-              role="link"
-              tabIndex={0}
-              onKeyDown={(e) => { if (e.key === 'Enter') goToPackage(pkg.slug); }}
-              className={`flex flex-col p-8 lg:p-10 rounded-[8px] cursor-pointer transition-transform hover:-translate-y-1 ${pkg.featured ? 'bg-primary text-primary-foreground' : 'bg-secondary/50 text-foreground'}`}
             >
-              <h3 className={`font-sans text-lg font-semibold mb-2 ${pkg.featured ? 'text-primary-foreground' : 'text-foreground'}`}>
-                {pkg.name}
-              </h3>
-              <div className="flex items-baseline gap-2 mb-6">
-                <span className={`font-mono text-2xl ${pkg.featured ? 'text-primary-foreground' : 'text-foreground'}`}>{pkg.price}</span>
-                <span className={`font-mono text-xs ${pkg.featured ? 'text-primary-foreground/60' : 'text-muted-foreground'}`}>{pkg.cadence}</span>
-              </div>
-              <p className={`text-sm font-sans leading-relaxed mb-8 ${pkg.featured ? 'text-primary-foreground/80' : 'text-muted-foreground'}`}>
-                {pkg.description}
-              </p>
-
-              <div className={`mb-6 ${pkg.featured ? 'text-primary-foreground' : 'text-foreground'}`}>
-                <p className={`font-mono text-xs tracking-widest uppercase mb-4 ${pkg.featured ? 'text-primary-foreground/60' : 'text-muted-foreground'}`}>Includes</p>
-                <ul className="space-y-2.5">
-                  {pkg.includes.map((item, idx) => (
-                    <li key={idx} className={`text-sm font-sans leading-snug ${pkg.featured ? 'text-primary-foreground/90' : 'text-foreground'}`}>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {pkg.note && (
-                <p className={`text-xs font-sans italic leading-relaxed mt-auto mb-6 pt-6 ${pkg.featured ? 'text-primary-foreground/60' : 'text-muted-foreground'}`}>
-                  {pkg.note}
-                </p>
-              )}
-
-              <span className={`font-mono text-xs tracking-widest uppercase mb-4 underline ${pkg.featured ? 'text-primary-foreground' : 'text-primary'}`}>
-                View details
-              </span>
-
               <Link
-                to="/contact"
-                onClick={(e) => e.stopPropagation()}
-                className={`font-mono text-xs tracking-widest uppercase text-center py-3 transition-colors ${
-                  pkg.featured
-                    ? 'bg-primary-foreground text-primary hover:bg-primary-foreground/90'
-                    : 'border border-primary text-primary hover:bg-primary hover:text-primary-foreground'
-                }`}
+                to={`/packages/${pkg.slug}`}
+                className={`flex flex-col p-8 lg:p-10 h-full rounded-[8px] transition-colors ${pkg.featured ? 'bg-primary text-primary-foreground hover:bg-primary/90' : 'bg-secondary/50 text-foreground hover:bg-secondary/70'}`}
               >
-                Enquire
+                <h3 className={`font-sans text-lg font-semibold mb-2 ${pkg.featured ? 'text-primary-foreground' : 'text-foreground'}`}>
+                  {pkg.name}
+                </h3>
+                <div className="flex items-baseline gap-2 mb-6">
+                  <span className={`font-mono text-2xl ${pkg.featured ? 'text-primary-foreground' : 'text-foreground'}`}>{pkg.price}</span>
+                  <span className={`font-mono text-xs ${pkg.featured ? 'text-primary-foreground/60' : 'text-muted-foreground'}`}>{pkg.cadence}</span>
+                </div>
+                <p className={`text-sm font-sans leading-relaxed mb-8 ${pkg.featured ? 'text-primary-foreground/80' : 'text-muted-foreground'}`}>
+                  {pkg.description}
+                </p>
+
+                <div className={`mb-6 ${pkg.featured ? 'text-primary-foreground' : 'text-foreground'}`}>
+                  <p className={`font-mono text-xs tracking-widest uppercase mb-4 ${pkg.featured ? 'text-primary-foreground/60' : 'text-muted-foreground'}`}>Includes</p>
+                  <ul className="space-y-2.5">
+                    {pkg.includes.map((item, idx) => (
+                      <li key={idx} className={`text-sm font-sans leading-snug ${pkg.featured ? 'text-primary-foreground/90' : 'text-foreground'}`}>
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {pkg.note && (
+                  <p className={`text-xs font-sans italic leading-relaxed mt-auto mb-6 pt-6 ${pkg.featured ? 'text-primary-foreground/60' : 'text-muted-foreground'}`}>
+                    {pkg.note}
+                  </p>
+                )}
+
+                <span className={`font-mono text-xs tracking-widest uppercase mb-4 underline ${pkg.featured ? 'text-primary-foreground' : 'text-primary'}`}>
+                  View details
+                </span>
+
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    navigate('/contact');
+                  }}
+                  className={`font-mono text-xs tracking-widest uppercase text-center py-3 transition-colors ${
+                    pkg.featured
+                      ? 'bg-primary-foreground text-primary hover:bg-primary-foreground/90'
+                      : 'border border-primary text-primary hover:bg-primary hover:text-primary-foreground'
+                  }`}
+                >
+                  Enquire
+                </button>
               </Link>
             </motion.div>
           ))}
