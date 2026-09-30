@@ -1,0 +1,55 @@
+export const packages = [
+  {
+    slug: 'author-branding-essentials',
+    name: 'Author Branding Essentials',
+    price: '£300',
+    cadence: 'one-off',
+    description: 'A complete, considered brand foundation designed specifically for authors and literary projects.',
+    includes: [
+      'Primary logo',
+      'Secondary logo',
+      'Submarks',
+      'Colour palette',
+      'Typography',
+      'Social media templates (including post covers)',
+      'Media kit',
+      'Clear brand guidelines',
+    ],
+    note: 'Delivered fully packaged, including editable Canva templates for ease of use.',
+    whoFor: 'Authors, whether publishing independently or with a traditional publisher, who need a clear identity in place before they start promoting their books. You get one consistent look and a set of files you can use everywhere, from social media to press.',
+    service: { slug: 'branding', label: 'Branding' },
+  },
+  {
+    slug: 'social-media-retainer',
+    name: 'Social Media Retainer',
+    price: '£250',
+    cadence: 'per month',
+    description: 'Consistent, professionally designed content to support your writing life and ongoing book promotion in a way that feels authentic and personal to you.',
+    includes: [
+      '16 feed posts per month',
+      'Content aligned with your brand, releases, and wider marketing activity',
+      'Stay visible without constant pressure to perform online',
+    ],
+    note: 'Three-month minimum commitment. Payment for retainers is monthly in advance.',
+    featured: true,
+    whoFor: 'Authors who want to stay visible around their releases and in between them, without having to design and plan every post themselves.',
+    service: { slug: 'social-media', label: 'Social media' },
+  },
+  {
+    slug: 'custom-social-media-templates',
+    name: 'Custom Social Media Templates',
+    price: '£100',
+    cadence: 'one-off',
+    description: 'Flexible, ready-to-use templates for authors who want marketing assets tailored to their needs, not a one-size-fits-all look.',
+    includes: [
+      '10 custom-designed post templates',
+      'Shaped around your existing branding, tone, and platforms',
+      'Designed to slot into your wider marketing activity',
+    ],
+    note: 'Delivered in Canva for easy reuse and adaptation.',
+    whoFor: 'Authors who already know their branding, tone and platforms and want ready-made assets built around them, rather than a generic template pack.',
+    service: { slug: 'social-media', label: 'Social media' },
+  },
+];
+
+export const getPackageBySlug = (slug) => packages.find((p) => p.slug === slug);
