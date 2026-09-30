@@ -53,7 +53,7 @@ export default function Services() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="mt-20 grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-center"
+          className="mt-20 max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-center"
         >
           <div className="md:col-span-8">
             <h2 className="font-display text-3xl md:text-4xl tracking-wide text-foreground leading-[0.95] mb-4">
@@ -84,7 +84,7 @@ export default function Services() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="mt-20 bg-secondary/50 p-10 md:p-16 rounded-[8px] text-center"
+          className="mt-20 max-w-5xl mx-auto bg-secondary/50 p-10 md:p-16 rounded-[8px] text-center"
         >
           <h2 className="font-display text-4xl md:text-5xl tracking-wide text-foreground leading-[0.9] mb-4">
             Ready to work together?
