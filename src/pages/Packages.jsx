@@ -83,10 +83,6 @@ export default function Packages() {
                   </p>
                 )}
 
-                <span className={`font-mono text-xs tracking-widest uppercase mb-4 underline ${pkg.featured ? 'text-primary-foreground' : 'text-primary'}`}>
-                  View details
-                </span>
-
                 <button
                   type="button"
                   onClick={(e) => {
