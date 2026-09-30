@@ -1,10 +1,14 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { packages } from '@/lib/packagesData';
 
 export default function Packages() {
+  const navigate = useNavigate();
+
+  const goToPackage = (slug) => navigate(`/packages/${slug}`);
+
   return (
     <div className="px-6 lg:px-10 py-16 md:py-24">
       <div className="max-w-7xl mx-auto">
@@ -39,7 +43,7 @@ export default function Packages() {
           </p>
         </motion.div>
 
-        {/* Packages grid */}
+        {/* Packages grid — the whole card is clickable through to its own page */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mb-20">
           {packages.map((pkg, i) => (
             <motion.div
@@ -48,10 +52,14 @@ export default function Packages() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.08 }}
-              className={`flex flex-col p-8 lg:p-10 rounded-[8px] ${pkg.featured ? 'bg-primary text-primary-foreground' : 'bg-secondary/50 text-foreground'}`}
+              onClick={() => goToPackage(pkg.slug)}
+              role="link"
+              tabIndex={0}
+              onKeyDown={(e) => { if (e.key === 'Enter') goToPackage(pkg.slug); }}
+              className={`flex flex-col p-8 lg:p-10 rounded-[8px] cursor-pointer transition-transform hover:-translate-y-1 ${pkg.featured ? 'bg-primary text-primary-foreground' : 'bg-secondary/50 text-foreground'}`}
             >
               <h3 className={`font-sans text-lg font-semibold mb-2 ${pkg.featured ? 'text-primary-foreground' : 'text-foreground'}`}>
-                <Link to={`/packages/${pkg.slug}`} className="hover:underline">{pkg.name}</Link>
+                {pkg.name}
               </h3>
               <div className="flex items-baseline gap-2 mb-6">
                 <span className={`font-mono text-2xl ${pkg.featured ? 'text-primary-foreground' : 'text-foreground'}`}>{pkg.price}</span>
@@ -78,15 +86,13 @@ export default function Packages() {
                 </p>
               )}
 
-              <Link
-                to={`/packages/${pkg.slug}`}
-                className={`font-mono text-xs tracking-widest uppercase mb-4 hover:underline ${pkg.featured ? 'text-primary-foreground' : 'text-primary'}`}
-              >
+              <span className={`font-mono text-xs tracking-widest uppercase mb-4 underline ${pkg.featured ? 'text-primary-foreground' : 'text-primary'}`}>
                 View details
-              </Link>
+              </span>
 
               <Link
                 to="/contact"
+                onClick={(e) => e.stopPropagation()}
                 className={`font-mono text-xs tracking-widest uppercase text-center py-3 transition-colors ${
                   pkg.featured
                     ? 'bg-primary-foreground text-primary hover:bg-primary-foreground/90'
