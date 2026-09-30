@@ -84,7 +84,7 @@ export default function Services() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="mt-20 max-w-5xl mx-auto bg-secondary/50 p-10 md:p-16 rounded-[8px] text-center"
+          className="mt-20 max-w-4xl mx-auto bg-secondary/50 p-10 md:p-16 rounded-[8px] text-center"
         >
           <h2 className="font-display text-4xl md:text-5xl tracking-wide text-foreground leading-[0.9] mb-4">
             Ready to work together?
