@@ -51,7 +51,7 @@ export default function Library() {
           </p>
           {searchParams.get('checkout') === 'success' && (
             <p className="font-mono text-xs tracking-widest uppercase text-primary mt-6">
-              Payment received — your item is below.
+              Payment received. Your item is below.
             </p>
           )}
         </motion.div>
@@ -68,7 +68,7 @@ export default function Library() {
             </p>
             <Link
               to="/shop"
-              className="font-mono text-xs tracking-widest uppercase border border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-colors px-6 py-3 inline-block"
+              className="font-mono text-xs tracking-widest uppercase bg-primary text-primary-foreground hover:bg-primary/90 transition-colors px-6 py-3 inline-block"
             >
               Browse the shop
             </Link>
@@ -87,7 +87,7 @@ export default function Library() {
                 >
                   <div className="flex items-center gap-5">
                     {item.product?.cover_image_url ? (
-                      <div className="w-16 h-12 bg-background overflow-hidden flex-shrink-0">
+                      <div className="w-16 h-12 bg-background overflow-hidden flex-shrink-0 rounded-[8px]">
                         <img src={item.product.cover_image_url} alt={item.product_name} className="w-full h-full object-contain" />
                       </div>
                     ) : (

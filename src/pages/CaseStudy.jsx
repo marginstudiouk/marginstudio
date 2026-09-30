@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
 import { useQuery } from '@tanstack/react-query';
 import ReactMarkdown from 'react-markdown';
@@ -55,12 +54,11 @@ export default function CaseStudy() {
 
   return (
     <div className="px-6 lg:px-10 py-16 md:py-24">
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         <Link
           to={`/services/${item.service_type}`}
           className="inline-flex items-center font-mono text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors mb-12 group"
         >
-          <ArrowLeft className="w-3.5 h-3.5 mr-2 transition-transform group-hover:-translate-x-1" />
           {serviceLabels[item.service_type] || 'Services'}
         </Link>
 
@@ -101,6 +99,22 @@ export default function CaseStudy() {
             )}
           </div>
         </motion.div>
+
+        {item.gallery_urls && item.gallery_urls.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-16"
+          >
+            {item.gallery_urls.map((url, i) => (
+              <div key={i} className="aspect-square bg-secondary/50 overflow-hidden rounded-[8px]">
+                <img src={url} alt={`${item.name} ${i + 1}`} className="w-full h-full object-cover" />
+              </div>
+            ))}
+          </motion.div>
+        )}
 
         {item.content && (
           <motion.div
@@ -144,7 +158,6 @@ export default function CaseStudy() {
             className="inline-flex items-center font-mono text-xs tracking-widest uppercase bg-primary text-primary-foreground hover:bg-primary/90 transition-colors px-8 py-4 group"
           >
             Get in touch
-            <ArrowRight className="w-3.5 h-3.5 ml-2 transition-transform group-hover:translate-x-1" />
           </Link>
         </div>
       </div>

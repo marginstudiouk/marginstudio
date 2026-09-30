@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, Check } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { getPackageBySlug, packages } from '@/lib/packagesData';
 
 export default function PackageDetail() {
@@ -21,7 +21,7 @@ export default function PackageDetail() {
 
   return (
     <div className="px-6 lg:px-10 py-16 md:py-24">
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -87,28 +87,26 @@ export default function PackageDetail() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="bg-secondary/50 p-10 md:p-14 mb-16 rounded-[8px]"
+          className="bg-secondary/50 p-10 md:p-16 mb-16 rounded-[8px] text-center"
         >
           <h2 className="font-display text-3xl md:text-4xl tracking-wide text-foreground leading-[0.9] mb-4">
-            Interested in<br />{pkg.name.toLowerCase()}?
+            Interested in {pkg.name.toLowerCase()}?
           </h2>
-          <p className="text-sm font-sans text-muted-foreground mb-8 max-w-md leading-relaxed">
+          <p className="text-sm font-sans text-muted-foreground mb-8 max-w-md mx-auto leading-relaxed">
             Tell us a little about you and your books and we will let you know how we can help.
           </p>
-          <div className="flex flex-col sm:flex-row items-start gap-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               to="/contact"
               className="inline-flex items-center font-mono text-xs tracking-widest uppercase bg-primary text-primary-foreground hover:bg-primary/90 transition-colors px-8 py-4 group"
             >
               Enquire
-              <ArrowRight className="w-3.5 h-3.5 ml-2 transition-transform group-hover:translate-x-1" />
             </Link>
             <Link
               to={`/services/${pkg.service.slug}`}
-              className="inline-flex items-center font-mono text-xs tracking-widest uppercase border border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-colors px-8 py-4 group"
+              className="inline-flex items-center font-mono text-xs tracking-widest uppercase bg-primary text-primary-foreground hover:bg-primary/90 transition-colors px-8 py-4 group"
             >
               About our {pkg.service.label.toLowerCase()} service
-              <ArrowRight className="w-3.5 h-3.5 ml-2 transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
         </motion.div>

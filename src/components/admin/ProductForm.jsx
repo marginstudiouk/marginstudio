@@ -243,7 +243,7 @@ export default function ProductForm({ editingProduct, onDone }) {
         <div>
           <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Sold out</Label>
           <p className="text-xs font-sans text-muted-foreground/70 mt-1">
-            Hides the buy button and shows "Sold out". Premade covers get this set automatically the moment they sell — this toggle is for manual overrides.
+            Hides the buy button and shows "Sold out". Premade covers get this set automatically the moment they sell; this toggle is for manual overrides.
           </p>
         </div>
         <Switch checked={form.sold_out} onCheckedChange={(v) => setForm((f) => ({ ...f, sold_out: v }))} />

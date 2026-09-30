@@ -30,7 +30,7 @@ export default function ResourceCard({ product, index = 0 }) {
       sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ email, name }));
       setDownloadUrl(url);
     } catch (err) {
-      setError('Something went wrong — try again or email hello@marginstudio.co.uk.');
+      setError('Something went wrong, try again or email hello@marginstudio.co.uk.');
     } finally {
       setSubmitting(false);
     }
@@ -47,7 +47,7 @@ export default function ResourceCard({ product, index = 0 }) {
       transition={{ duration: 0.5, delay: index * 0.06 }}
       className="flex flex-col"
     >
-      <div className="aspect-[4/3] bg-background overflow-hidden mb-5 relative">
+      <div className="aspect-[4/3] bg-background overflow-hidden mb-5 relative rounded-[8px]">
         {product.cover_image_url ? (
           <img src={product.cover_image_url} alt={product.name} className="w-full h-full object-contain" />
         ) : (

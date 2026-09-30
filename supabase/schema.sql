@@ -87,12 +87,14 @@ create table if not exists public.products (
   what_this_is text,
   included_items text[] default '{}',
   audience text,
-  category text not null check (category in ('launch_kits','content_systems','branding_kits','templates','premade_covers')),
+  category text not null check (category in ('diy_kits','templates','premade_covers','elements')),
   price numeric(10,2) not null default 0,
   cover_image_url text,
+  gallery_urls text[] not null default '{}',
   storage_path text, -- path inside the private 'product-files' bucket. Null for free resources delivered by email link.
   is_free boolean not null default false,
-  stripe_price_id text, -- null until synced to Stripe; required before a paid product can be purchased
+  sold_out boolean not null default false, -- set automatically for premade_covers the moment they sell; manual override otherwise
+  variants jsonb not null default '[]'::jsonb, -- optional pricing options, e.g. Ebook vs Ebook + Print, each { id, label, price }
   created_at timestamptz not null default now()
 );
 
@@ -111,6 +113,7 @@ create table if not exists public.posts (
   excerpt text,
   content text,
   cover_image_url text,
+  gallery_urls text[] not null default '{}',
   author text,
   tags text[] default '{}',
   status text not null default 'published' check (status in ('draft','published')),
@@ -133,6 +136,7 @@ create table if not exists public.portfolio (
   client text,
   service_type text check (service_type in ('branding','campaigns','social-media','email-marketing','book-covers','websites')),
   cover_image_url text,
+  gallery_urls text[] not null default '{}',
   excerpt text,
   content text,
   created_at timestamptz not null default now()

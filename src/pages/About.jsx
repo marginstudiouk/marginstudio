@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
 
 const principles = [
   { num: '01', title: 'Editorial first', description: 'We approach marketing the way good editors approach a manuscript: with attention, intent, and respect for the work.' },
@@ -13,7 +12,7 @@ const principles = [
 export default function About() {
   return (
     <div className="px-6 lg:px-10 py-16 md:py-24">
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         {/* Hero */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -78,7 +77,6 @@ export default function About() {
             className="inline-flex items-center font-mono text-xs tracking-widest uppercase bg-primary text-primary-foreground hover:bg-primary/90 transition-colors px-8 py-4 group"
           >
             Get in touch
-            <ArrowRight className="w-3.5 h-3.5 ml-2 transition-transform group-hover:translate-x-1" />
           </Link>
         </motion.div>
       </div>

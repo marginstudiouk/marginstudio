@@ -41,7 +41,8 @@ export default function JournalDetail() {
 
   return (
     <div className="px-6 lg:px-10 py-16 md:py-24">
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-7xl mx-auto">
+       <div className="max-w-2xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -67,7 +68,7 @@ export default function JournalDetail() {
             transition={{ duration: 0.6 }}
             src={post.cover_image_url}
             alt={post.title}
-            className="w-full h-auto mb-12"
+            className="w-full h-auto mb-12 rounded-[8px]"
           />
         )}
 
@@ -86,6 +87,16 @@ export default function JournalDetail() {
           <div dangerouslySetInnerHTML={{ __html: post.content || '' }} />
         </motion.article>
 
+        {post.gallery_urls && post.gallery_urls.length > 0 && (
+          <div className="mt-12 grid grid-cols-2 md:grid-cols-3 gap-4">
+            {post.gallery_urls.map((url, i) => (
+              <div key={i} className="aspect-square overflow-hidden bg-background rounded-[8px]">
+                <img src={url} alt={`${post.title} ${i + 1}`} className="w-full h-full object-cover" />
+              </div>
+            ))}
+          </div>
+        )}
+
         {post.tags && post.tags.length > 0 && (
           <div className="mt-12 flex flex-wrap gap-2">
             {post.tags.map((tag) => (
@@ -93,6 +104,7 @@ export default function JournalDetail() {
             ))}
           </div>
         )}
+       </div>
       </div>
     </div>
   );

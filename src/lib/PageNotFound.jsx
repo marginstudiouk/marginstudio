@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
 
 export default function PageNotFound() {
   return (
@@ -19,7 +18,6 @@ export default function PageNotFound() {
             className="inline-flex items-center font-mono text-xs tracking-widest uppercase bg-primary text-primary-foreground hover:bg-primary/90 transition-colors px-8 py-4 group"
           >
             Back to the homepage
-            <ArrowRight className="w-3.5 h-3.5 ml-2 transition-transform group-hover:translate-x-1" />
           </Link>
           <Link
             to="/journal"

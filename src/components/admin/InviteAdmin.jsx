@@ -28,7 +28,7 @@ export default function InviteAdmin() {
         Invite a new admin
       </p>
       <p className="text-sm font-sans text-muted-foreground leading-relaxed mb-6">
-        They'll get an email to set their own password and land straight in as an admin —
+        They'll get an email to set their own password and land straight in as an admin,
         this never touches an existing customer account, and only admins can send invites.
       </p>
       <form onSubmit={submit} className="flex gap-2">

@@ -79,7 +79,7 @@ export default function Navbar() {
             )}
             <Link
               to="/shop"
-              className="font-mono text-xs tracking-widest uppercase border border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-colors px-4 py-2"
+              className="font-mono text-xs tracking-widest uppercase bg-primary text-primary-foreground hover:bg-primary/90 transition-colors px-4 py-2"
             >
               Browse shop
             </Link>

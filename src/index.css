@@ -102,3 +102,12 @@ body::after {
 .border-gold {
   border-color: hsl(42, 85%, 58%);
 }
+
+/* Custom pencil cursor: hides the real cursor on non-touch devices only,
+   so the PencilCursor component's own icon takes its place. */
+@media (hover: hover) and (pointer: fine) {
+  body.pencil-cursor-active,
+  body.pencil-cursor-active * {
+    cursor: none !important;
+  }
+}

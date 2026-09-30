@@ -87,10 +87,10 @@ export default function ProductDetail() {
 
   return (
     <div className="px-6 lg:px-10 py-16 md:py-24">
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>
-            <div className="aspect-[4/3] bg-background overflow-hidden relative">
+            <div className="aspect-[4/3] bg-background overflow-hidden relative rounded-[8px]">
               {product.cover_image_url ? (
                 <img
                   src={product.cover_image_url}
@@ -110,6 +110,15 @@ export default function ProductDetail() {
                 </div>
               )}
             </div>
+            {product.gallery_urls && product.gallery_urls.length > 0 && (
+              <div className="grid grid-cols-3 gap-3 mt-3">
+                {product.gallery_urls.map((url, i) => (
+                  <div key={i} className="aspect-square bg-background overflow-hidden rounded-[8px]">
+                    <img src={url} alt={`${product.name} ${i + 1}`} className="w-full h-full object-contain" />
+                  </div>
+                ))}
+              </div>
+            )}
           </motion.div>
 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }} className="space-y-8">
@@ -134,7 +143,7 @@ export default function ProductDetail() {
             {product.what_this_is && (
               <div>
                 <p className="font-mono text-xs tracking-widest uppercase text-muted-foreground mb-3">What this is</p>
-                <p className="text-sm font-sans text-foreground leading-relaxed">{product.what_this_is}</p>
+                <p className="text-sm font-sans text-foreground leading-relaxed whitespace-pre-line">{product.what_this_is}</p>
               </div>
             )}
 

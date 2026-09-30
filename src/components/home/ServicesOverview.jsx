@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { services } from '@/lib/servicesData';
 
@@ -19,7 +18,6 @@ export default function ServicesOverview() {
             className="hidden md:inline-flex items-center font-mono text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors group"
           >
             Learn more
-            <ArrowRight className="w-3.5 h-3.5 ml-2 transition-transform group-hover:translate-x-1" />
           </Link>
         </div>
 

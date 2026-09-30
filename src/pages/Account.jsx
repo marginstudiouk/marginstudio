@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { LogOut, Download, ArrowRight, UserCircle, Check } from 'lucide-react';
+import { LogOut, Download, UserCircle, Check } from 'lucide-react';
 import { useAuth } from '@/lib/AuthContext';
 
 
@@ -134,7 +134,6 @@ export default function Account() {
             </p>
             <Link to="/library" className="inline-flex items-center font-mono text-xs tracking-widest uppercase text-primary group">
               Open library
-              <ArrowRight className="w-3.5 h-3.5 ml-2 transition-transform group-hover:translate-x-1" />
             </Link>
           </motion.div>
 

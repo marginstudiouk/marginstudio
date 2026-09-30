@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
 import { useQuery } from '@tanstack/react-query';
 
@@ -43,7 +42,6 @@ export default function JournalTeaser() {
             className="hidden md:inline-flex items-center font-mono text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors group"
           >
             Read the journal
-            <ArrowRight className="w-3.5 h-3.5 ml-2 transition-transform group-hover:translate-x-1" />
           </Link>
         </div>
 
@@ -94,7 +92,6 @@ export default function JournalTeaser() {
             className="inline-flex items-center font-mono text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors group"
           >
             Read the journal
-            <ArrowRight className="w-3.5 h-3.5 ml-2 transition-transform group-hover:translate-x-1" />
           </Link>
         </div>
       </div>

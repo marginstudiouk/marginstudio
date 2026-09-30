@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const categoryLabels = {
@@ -24,7 +23,7 @@ export default function ProductCard({ product, index = 0 }) {
       transition={{ duration: 0.5, delay: index * 0.06 }}
     >
       <Link to={`/product/${product.slug}`} className="group block">
-        <div className="aspect-[4/3] bg-background overflow-hidden mb-5 relative">
+        <div className="aspect-[4/3] bg-background overflow-hidden mb-5 relative rounded-[8px]">
           {product.cover_image_url ? (
             <img
               src={product.cover_image_url}
@@ -68,7 +67,6 @@ export default function ProductCard({ product, index = 0 }) {
           </p>
           <span className="inline-flex items-center font-mono text-xs tracking-widest uppercase text-primary opacity-0 group-hover:opacity-100 transition-opacity pt-1">
             View
-            <ArrowRight className="w-3 h-3 ml-1.5" />
           </span>
         </div>
       </Link>

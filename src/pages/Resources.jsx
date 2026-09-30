@@ -31,7 +31,7 @@ export default function Resources() {
             Resources
           </h1>
           <p className="text-sm font-sans text-muted-foreground max-w-md leading-relaxed mt-4">
-            A small library of free tools, templates, and guides for authors. Pop your email in once per download — it'll land in your inbox and unlock instantly.
+            A small library of free tools, templates, and guides for authors. Pop your email in once per download and it'll land in your inbox and unlock instantly.
           </p>
         </motion.div>
 
@@ -39,7 +39,7 @@ export default function Resources() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10">
             {[1, 2, 3].map((i) => (
               <div key={i} className="animate-pulse">
-                <div className="aspect-[4/3] bg-secondary/50 mb-5" />
+                <div className="aspect-[4/3] bg-secondary/50 mb-5 rounded-[8px]" />
                 <div className="h-4 bg-secondary/50 w-2/3 mb-2" />
                 <div className="h-3 bg-secondary/50 w-1/2" />
               </div>

@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function SplitDecision() {
@@ -44,7 +43,6 @@ export default function SplitDecision() {
               className="inline-flex items-center font-mono text-xs tracking-widest uppercase text-primary-foreground border-b border-primary-foreground/40 pb-0.5 hover:border-primary-foreground transition-colors group"
             >
               View services
-              <ArrowRight className="w-3.5 h-3.5 ml-2 transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
         </motion.div>
@@ -68,7 +66,6 @@ export default function SplitDecision() {
             className="inline-flex items-center font-mono text-xs tracking-widest uppercase text-foreground border-b border-border pb-0.5 hover:border-foreground transition-colors group"
           >
             Visit shop
-            <ArrowRight className="w-3.5 h-3.5 ml-2 transition-transform group-hover:translate-x-1" />
           </Link>
         </motion.div>
       </div>
