@@ -63,7 +63,7 @@ export default function SplitDecision() {
           </p>
           <Link
             to="/shop"
-            className="inline-flex items-center font-mono text-xs tracking-widest uppercase text-foreground border-b border-border pb-0.5 hover:border-foreground transition-colors group"
+            className="inline-flex items-center font-mono text-xs tracking-widest uppercase bg-primary text-primary-foreground hover:bg-primary/90 transition-colors px-8 py-4 group"
           >
             Visit shop
           </Link>
