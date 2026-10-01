@@ -73,7 +73,7 @@ export default function ResourceCard({ product, index = 0 }) {
                 href={downloadUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center font-mono text-xs tracking-widest uppercase border border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-colors px-5 py-3"
+                className="inline-flex items-center font-mono text-xs tracking-widest uppercase bg-primary text-primary-foreground hover:bg-primary/90 transition-colors px-5 py-3"
               >
                 <Download className="w-3.5 h-3.5 mr-2" />
                 Download now
@@ -84,7 +84,7 @@ export default function ResourceCard({ product, index = 0 }) {
             <button
               onClick={requestDownload}
               disabled={submitting}
-              className="inline-flex items-center font-mono text-xs tracking-widest uppercase border border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-colors px-5 py-3 disabled:opacity-60"
+              className="inline-flex items-center font-mono text-xs tracking-widest uppercase bg-primary text-primary-foreground hover:bg-primary/90 transition-colors px-5 py-3 disabled:opacity-60"
             >
               {submitting ? <Loader2 className="w-3.5 h-3.5 mr-2 animate-spin" /> : <Download className="w-3.5 h-3.5 mr-2" />}
               Get it free
@@ -92,7 +92,7 @@ export default function ResourceCard({ product, index = 0 }) {
           ) : !showForm ? (
             <button
               onClick={() => setShowForm(true)}
-              className="inline-flex items-center font-mono text-xs tracking-widest uppercase border border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-colors px-5 py-3"
+              className="inline-flex items-center font-mono text-xs tracking-widest uppercase bg-primary text-primary-foreground hover:bg-primary/90 transition-colors px-5 py-3"
             >
               <Mail className="w-3.5 h-3.5 mr-2" />
               Get it free
