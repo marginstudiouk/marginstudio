@@ -18,21 +18,26 @@ export default function About() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="mb-20 max-w-2xl"
+          className="mb-20 grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-16 items-start"
         >
-          <h1 className="font-display text-5xl md:text-7xl tracking-wide text-foreground leading-[0.9] mb-10">
-            It's time to<br /><span className="text-primary">find</span> your<br />readers.
-          </h1>
-          <p className="font-display text-2xl md:text-3xl uppercase tracking-wide text-foreground mb-8 leading-[0.95]">
-            We know books.
-          </p>
-          <div className="space-y-5 text-base font-sans text-muted-foreground leading-relaxed max-w-xl">
-            <p>
-              Margin work with creatively bold clients who understand that good work needs more than talent alone to sell. Branding and marketing are how stories travel, how readers recognise what matters to them, and how creative careers are sustained.
+          <div className="md:col-span-5">
+            <h1 className="font-display text-5xl md:text-7xl tracking-wide text-foreground leading-[0.9]">
+              It's time to<br /><span className="text-primary">find</span> your<br />readers.
+            </h1>
+          </div>
+
+          <div className="md:col-span-7 md:pt-3">
+            <p className="font-display text-2xl md:text-3xl uppercase tracking-wide text-foreground mb-8 leading-[0.95]">
+              We know books.
             </p>
-            <p>
-              With over 20 years book marketing and design experience, we bring strategy and creative together to build work that feels intentional, distinctive, and owned, supporting books and book-led businesses as they launch and grow.
-            </p>
+            <div className="space-y-5 text-base font-sans text-muted-foreground leading-relaxed max-w-2xl">
+              <p>
+                Margin work with creatively bold clients who understand that good work needs more than talent alone to sell. Branding and marketing are how stories travel, how readers recognise what matters to them, and how creative careers are sustained.
+              </p>
+              <p>
+                With over 20 years book marketing and design experience, we bring strategy and creative together to build work that feels intentional, distinctive, and owned, supporting books and book-led businesses as they launch and grow.
+              </p>
+            </div>
           </div>
         </motion.div>
 
