@@ -91,6 +91,7 @@ create table if not exists public.products (
   price numeric(10,2) not null default 0,
   cover_image_url text,
   gallery_urls text[] not null default '{}',
+  gallery_layouts text[] not null default '{}',
   storage_path text, -- path inside the private 'product-files' bucket. Null for free resources delivered by email link.
   is_free boolean not null default false,
   sold_out boolean not null default false, -- set automatically for premade_covers the moment they sell; manual override otherwise

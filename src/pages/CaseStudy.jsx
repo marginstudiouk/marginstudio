@@ -139,18 +139,25 @@ export default function CaseStudy() {
             transition={{ duration: 0.6 }}
             className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-16 mb-20"
           >
-            {item.gallery_urls.map((url, i) => (
-              <div
-                key={i}
-                className="aspect-[4/3] bg-secondary/50 overflow-hidden rounded-[8px]"
-              >
-                <img
-                  src={url}
-                  alt={`${item.name} ${i + 1}`}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            ))}
+            {item.gallery_urls.map((url, i) => {
+              const layout = item.gallery_layouts?.[i] || 'half';
+              const isFull = layout === 'full';
+
+              return (
+                <div
+                  key={`${url}-${i}`}
+                  className={`${isFull ? 'md:col-span-2' : 'md:col-span-1'} ${
+                    isFull ? 'aspect-[16/9]' : 'aspect-[4/3]'
+                  } bg-secondary/50 overflow-hidden rounded-[8px]`}
+                >
+                  <img
+                    src={url}
+                    alt={`${item.name} ${i + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              );
+            })}
           </motion.div>
         )}
 

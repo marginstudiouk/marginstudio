@@ -28,7 +28,7 @@ const serviceOptions = [
 
 const emptyForm = {
   name: '', slug: '', client: '', service_type: 'branding',
-  cover_image_url: '', gallery_urls: [], excerpt: '', content: '',
+  cover_image_url: '', gallery_urls: [], gallery_layouts: [], excerpt: '', content: '',
 };
 
 const itemToForm = (p) => ({
@@ -38,6 +38,9 @@ const itemToForm = (p) => ({
   service_type: p.service_type || 'branding',
   cover_image_url: p.cover_image_url || '',
   gallery_urls: p.gallery_urls || [],
+  gallery_layouts: (p.gallery_layouts?.length
+    ? p.gallery_layouts
+    : (p.gallery_urls || []).map(() => 'half')),
   excerpt: p.excerpt || '',
   content: p.content || '',
 });
@@ -85,15 +88,43 @@ export default function PortfolioForm({ editingItem, onDone }) {
         const { data: { publicUrl } } = supabase.storage.from('images').getPublicUrl(path);
         uploadedUrls.push(publicUrl);
       }
-      setForm((f) => ({ ...f, gallery_urls: [...f.gallery_urls, ...uploadedUrls] }));
+      setForm((f) => ({
+        ...f,
+        gallery_urls: [...f.gallery_urls, ...uploadedUrls],
+        gallery_layouts: [
+          ...(f.gallery_layouts || []),
+          ...uploadedUrls.map(() => 'half'),
+        ],
+      }));
     } finally {
       setGalleryUploading(false);
       e.target.value = '';
     }
   };
 
-  const removeGalleryImage = (url) => {
-    setForm((f) => ({ ...f, gallery_urls: f.gallery_urls.filter((u) => u !== url) }));
+  const removeGalleryImage = (index) => {
+    setForm((f) => ({
+      ...f,
+      gallery_urls: f.gallery_urls.filter((_, i) => i !== index),
+      gallery_layouts: (f.gallery_layouts || []).filter((_, i) => i !== index),
+    }));
+  };
+
+  const setGalleryLayout = (index, layout) => {
+    setForm((f) => {
+      const layouts = [...(f.gallery_layouts || [])];
+
+      while (layouts.length < f.gallery_urls.length) {
+        layouts.push('half');
+      }
+
+      layouts[index] = layout;
+
+      return {
+        ...f,
+        gallery_layouts: layouts,
+      };
+    });
   };
 
   const submit = async (e) => {
@@ -108,6 +139,7 @@ export default function PortfolioForm({ editingItem, onDone }) {
         service_type: form.service_type,
         cover_image_url: form.cover_image_url,
         gallery_urls: form.gallery_urls,
+        gallery_layouts: form.gallery_layouts || [],
         excerpt: form.excerpt,
         content: form.content,
       };
@@ -186,19 +218,43 @@ export default function PortfolioForm({ editingItem, onDone }) {
       </div>
       <div className="space-y-1.5">
         <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Additional images</Label>
-        <p className="text-xs font-sans text-muted-foreground/70 mb-2">Shown as a gallery on the case study page. Select multiple files at once, or add more one at a time.</p>
+        <p className="text-xs font-sans text-muted-foreground/70 mb-2">Images appear in upload order. Choose half width for paired images or full width for a larger portfolio image.</p>
         {form.gallery_urls.length > 0 && (
-          <div className="grid grid-cols-3 gap-2 mb-3">
-            {form.gallery_urls.map((url) => (
-              <div key={url} className="relative aspect-square bg-muted overflow-hidden group rounded-[8px]">
-                <img src={url} alt="" className="w-full h-full object-cover" />
-                <button
-                  type="button"
-                  onClick={() => removeGalleryImage(url)}
-                  className="absolute top-1 right-1 bg-background/90 p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                >
-                  <X className="w-3 h-3" />
-                </button>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            {form.gallery_urls.map((url, index) => (
+              <div key={`${url}-${index}`} className="bg-muted rounded-[8px] overflow-hidden">
+                <div className="relative aspect-[4/3] overflow-hidden group">
+                  <img src={url} alt="" className="w-full h-full object-cover" />
+
+                  <button
+                    type="button"
+                    onClick={() => removeGalleryImage(index)}
+                    className="absolute top-2 right-2 bg-background/90 p-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                    aria-label="Remove image"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+
+                <div className="p-3">
+                  <Label className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground">
+                    Layout
+                  </Label>
+
+                  <Select
+                    value={form.gallery_layouts?.[index] || 'half'}
+                    onValueChange={(value) => setGalleryLayout(index, value)}
+                  >
+                    <SelectTrigger className="bg-background rounded-none mt-2">
+                      <SelectValue />
+                    </SelectTrigger>
+
+                    <SelectContent>
+                      <SelectItem value="half">Half width</SelectItem>
+                      <SelectItem value="full">Full width</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             ))}
           </div>
