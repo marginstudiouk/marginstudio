@@ -48,6 +48,7 @@ export default function CaseStudyRow({ serviceType }) {
             >
               <Link
                 to={`/services/${service.slug}`}
+                onClick={() => window.scrollTo({ top: 0, left: 0, behavior: 'instant' })}
                 className="group block h-full bg-secondary/50 p-7 rounded-[8px] hover:bg-primary transition-colors"
               >
                 <h3 className="font-display text-2xl uppercase tracking-wide text-foreground group-hover:text-primary-foreground mb-3 transition-colors">
