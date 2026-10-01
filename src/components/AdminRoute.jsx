@@ -7,7 +7,7 @@ const Spinner = () => (
   </div>
 );
 
-// Wrap any route that requires an admin (you) — customers get bounced home.
+// Wrap any route that requires an admin (you). Customers get bounced home.
 export default function AdminRoute() {
   const { isAuthenticated, isAdmin, isLoadingAuth } = useAuth();
 

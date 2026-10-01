@@ -164,7 +164,7 @@ export default function Account() {
             transition={{ duration: 0.5, delay: 0.25 }}
           >
             <Link to="/admin" className="font-mono text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors">
-              Studio CMS →
+              Studio CMS
             </Link>
           </motion.div>
         )}

@@ -36,7 +36,7 @@ export default function ResourceCard({ product, index = 0 }) {
     }
   };
 
-  // Already know their email from a previous resource this session — skip the form.
+  // Already know their email from a previous resource this session. Skip the form.
   const alreadyKnown = !!cached?.email && !downloadUrl && !showForm;
 
   return (

@@ -17,7 +17,7 @@ export default function FooterNewsletter() {
     try {
       await supabase.from('subscribers').upsert({ email }, { onConflict: 'email' });
     } catch {
-      // already subscribed or network issue — still mark done
+      // already subscribed or network issue. Still mark done
     } finally {
       setSubmitting(false);
       sessionStorage.setItem(SESSION_KEY, '1');

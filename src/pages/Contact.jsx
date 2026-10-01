@@ -48,7 +48,7 @@ export default function Contact() {
       });
       if (dbError) throw dbError;
 
-      // Best-effort email notification — the enquiry is already saved either way.
+      // Best-effort email notification. The enquiry is already saved either way.
       supabase.functions.invoke('send-contact-email', { body: form }).catch(() => {});
 
       setSubmitted(true);
