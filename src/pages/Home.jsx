@@ -10,8 +10,8 @@ export default function Home() {
     <>
       <HeroSection />
       <SplitDecision />
-      <WorkInProgressCTA />
       <FeaturedProducts />
+      <WorkInProgressCTA />
       <JournalTeaser />
     </>
   );
