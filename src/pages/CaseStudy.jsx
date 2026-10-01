@@ -100,22 +100,6 @@ export default function CaseStudy() {
           </div>
         </motion.div>
 
-        {item.gallery_urls && item.gallery_urls.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-16"
-          >
-            {item.gallery_urls.map((url, i) => (
-              <div key={i} className="aspect-square bg-secondary/50 overflow-hidden rounded-[8px]">
-                <img src={url} alt={`${item.name} ${i + 1}`} className="w-full h-full object-cover" />
-              </div>
-            ))}
-          </motion.div>
-        )}
-
         {item.content && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
