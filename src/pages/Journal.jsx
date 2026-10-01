@@ -54,7 +54,7 @@ export default function Journal() {
               >
                 <Link to={`/journal/${post.slug}`} className="group block">
                   {post.cover_image_url ? (
-                    <div className="overflow-hidden bg-secondary/50">
+                    <div className="overflow-hidden bg-secondary/50 rounded-[8px]">
                       <img
                         src={post.cover_image_url}
                         alt={post.title}

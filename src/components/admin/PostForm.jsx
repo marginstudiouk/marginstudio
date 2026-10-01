@@ -34,7 +34,7 @@ const dmyToISO = (dmy) => {
 };
 
 const emptyForm = {
-  title: '', slug: '', excerpt: '', content: '', cover_image_url: '', author: '', tags: '', status: 'published', published_date: today(),
+  title: '', slug: '', excerpt: '', content: '', cover_image_url: '', gallery_urls: [], author: '', tags: '', status: 'published', published_date: today(),
 };
 
 const postToForm = (p) => ({
@@ -43,6 +43,7 @@ const postToForm = (p) => ({
   excerpt: p.excerpt || '',
   content: p.content || '',
   cover_image_url: p.cover_image_url || '',
+  gallery_urls: p.gallery_urls || [],
   author: p.author || '',
   tags: (p.tags || []).join(', '),
   status: p.status || 'published',
@@ -54,6 +55,7 @@ export default function PostForm({ editingPost, onDone }) {
   const [saving, setSaving] = useState(false);
   const [done, setDone] = useState(false);
   const [coverUploading, setCoverUploading] = useState(false);
+  const [galleryUploading, setGalleryUploading] = useState(false);
   const [form, setForm] = useState(emptyForm);
   const [dateText, setDateText] = useState(isoToDMY(today()));
 
@@ -81,6 +83,46 @@ export default function PostForm({ editingPost, onDone }) {
     }
   };
 
+
+  const handleGalleryUpload = async (e) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+
+    setGalleryUploading(true);
+
+    try {
+      const urls = [];
+
+      for (const file of files) {
+        const path = `journal-gallery/${crypto.randomUUID()}-${file.name}`;
+        const { error } = await supabase.storage.from('images').upload(path, file);
+
+        if (error) throw error;
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('images')
+          .getPublicUrl(path);
+
+        urls.push(publicUrl);
+      }
+
+      setForm((f) => ({
+        ...f,
+        gallery_urls: [...(f.gallery_urls || []), ...urls],
+      }));
+    } finally {
+      setGalleryUploading(false);
+      e.target.value = '';
+    }
+  };
+
+  const removeGalleryImage = (url) => {
+    setForm((f) => ({
+      ...f,
+      gallery_urls: (f.gallery_urls || []).filter((item) => item !== url),
+    }));
+  };
+
   const submit = async (e) => {
     e.preventDefault();
     setSaving(true);
@@ -92,6 +134,7 @@ export default function PostForm({ editingPost, onDone }) {
         excerpt: form.excerpt,
         content: form.content,
         cover_image_url: form.cover_image_url,
+        gallery_urls: form.gallery_urls || [],
         author: form.author,
         tags: form.tags.split(',').map((s) => s.trim()).filter(Boolean),
         status: form.status,
@@ -170,6 +213,53 @@ export default function PostForm({ editingPost, onDone }) {
           <Input value={form.author} onChange={set('author')} className="bg-background rounded-none" />
         </div>
       </div>
+
+      <div className="space-y-3">
+        <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">
+          Additional images
+        </Label>
+
+        {form.gallery_urls?.length > 0 && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {form.gallery_urls.map((url, i) => (
+              <div
+                key={url}
+                className="relative aspect-square overflow-hidden bg-muted rounded-[8px]"
+              >
+                <img
+                  src={url}
+                  alt={`Additional image ${i + 1}`}
+                  className="w-full h-full object-cover"
+                />
+
+                <button
+                  type="button"
+                  onClick={() => removeGalleryImage(url)}
+                  className="absolute top-2 right-2 bg-background/90 text-foreground px-2 py-1 font-mono text-[10px] uppercase"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <label className="flex items-center justify-center cursor-pointer bg-muted hover:bg-muted/70 px-4 py-6 transition-colors rounded-[8px]">
+          <span className="font-mono text-xs tracking-widest uppercase text-muted-foreground">
+            {galleryUploading ? 'Uploading…' : 'Add images'}
+          </span>
+
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            className="hidden"
+            onChange={handleGalleryUpload}
+            disabled={galleryUploading}
+          />
+        </label>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         <div className="space-y-1.5">
           <Label className="font-mono text-xs tracking-widest uppercase text-muted-foreground">Tags (comma separated)</Label>
