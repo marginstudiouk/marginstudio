@@ -40,7 +40,7 @@ export default function SplitDecision() {
             </p>
             <Link
               to="/services"
-              className="inline-flex items-center font-mono text-xs tracking-widest uppercase text-primary-foreground border-b border-primary-foreground/40 pb-0.5 hover:border-primary-foreground transition-colors group"
+              className="inline-flex items-center font-mono text-xs tracking-widest uppercase bg-secondary text-primary hover:bg-secondary/90 transition-colors px-8 py-4 group"
             >
               View services
             </Link>
