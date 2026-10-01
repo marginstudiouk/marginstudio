@@ -146,6 +146,30 @@ export default function CaseStudy() {
           </motion.div>
         )}
 
+
+        {item.gallery_urls && item.gallery_urls.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-16 mb-20"
+          >
+            {item.gallery_urls.map((url, i) => (
+              <div
+                key={i}
+                className="aspect-[4/3] bg-secondary/50 overflow-hidden rounded-[8px]"
+              >
+                <img
+                  src={url}
+                  alt={`${item.name} ${i + 1}`}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ))}
+          </motion.div>
+        )}
+
         <div className="bg-secondary/50 p-10 md:p-14 mt-20 rounded-[8px]">
           <h2 className="font-display text-3xl md:text-4xl tracking-wide text-foreground leading-[0.9] mb-4">
             Work with us

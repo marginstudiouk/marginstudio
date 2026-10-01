@@ -217,6 +217,30 @@ export default function ProductDetail() {
             )}
           </motion.div>
         </div>
+
+
+        {product.gallery_urls && product.gallery_urls.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-16"
+          >
+            {product.gallery_urls.map((url, i) => (
+              <div
+                key={i}
+                className="aspect-[4/3] bg-background overflow-hidden rounded-[8px]"
+              >
+                <img
+                  src={url}
+                  alt={`${product.name} ${i + 1}`}
+                  className="w-full h-full object-contain"
+                />
+              </div>
+            ))}
+          </motion.div>
+        )}
       </div>
     </div>
   );
