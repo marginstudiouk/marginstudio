@@ -2,7 +2,7 @@ export const services = [
   {
     slug: 'branding',
     name: 'Branding',
-    image: '/images/services/branding.svg',
+    image: '/images/services/branding.webp',
     shortDescription: 'Visual identity, tone of voice, and positioning for authors and imprints.',
     overview: 'We build author and publisher identities that feel intentional, distinctive, and built to last. From visual identity systems to tone of voice, every element is designed around your work, your readership, and how you need to show up across different platforms.',
     process: [
@@ -17,7 +17,7 @@ export const services = [
   {
     slug: 'campaigns',
     name: 'Campaigns',
-    image: '/images/services/campaigns.svg',
+    image: '/images/services/campaigns.webp',
     shortDescription: 'Strategic launch and ongoing marketing campaigns built around your book and readership.',
     overview: 'We plan and create book marketing campaigns around what the project actually needs. That might mean launch strategy, creative direction, advertising, content, outreach, or a combination of channels working together.',
     process: [
@@ -31,7 +31,7 @@ export const services = [
   {
     slug: 'social-media',
     name: 'Social media',
-    image: '/images/services/social-media.svg',
+    image: '/images/services/social-media.webp',
     shortDescription: 'Content strategy and management built specifically around books, authors, and readers.',
     overview: 'Social media support designed around the way authors and publishing businesses actually work. We can build the strategy, create repeatable content systems, develop assets, or manage ongoing content depending on what you need.',
     process: [
@@ -46,7 +46,7 @@ export const services = [
   {
     slug: 'email-marketing',
     name: 'Email marketing',
-    image: '/images/services/email-marketing.svg',
+    image: '/images/services/email-marketing.webp',
     shortDescription: 'Email strategy and systems that help turn readers into a lasting audience.',
     overview: 'We help authors and publishing businesses build email marketing that has a purpose beyond sending the occasional newsletter. That can include strategy, welcome journeys, launches, regular campaigns, templates, segmentation, and automation.',
     process: [
@@ -60,7 +60,7 @@ export const services = [
   {
     slug: 'book-covers',
     name: 'Book covers',
-    image: '/images/services/book-covers.svg',
+    image: '/images/services/book-covers.webp',
     shortDescription: 'Custom book cover design built around genre, readership, and the book itself.',
     overview: 'Custom cover design for independent authors and publishers. We look at the market your book sits within, how comparable titles are communicating with readers, and how to create something distinctive without losing the visual cues readers rely on.',
     process: [
@@ -75,7 +75,7 @@ export const services = [
   {
     slug: 'websites',
     name: 'Websites',
-    image: '/images/services/websites.svg',
+    image: '/images/services/websites.webp',
     shortDescription: 'Custom websites for authors, publishers, and book businesses.',
     overview: 'We design and build websites around the needs of the person or business using them. That can be a focused author site, a publishing platform, an ecommerce site, or something more bespoke with its own content management and functionality.',
     process: [
@@ -89,7 +89,7 @@ export const services = [
   {
     slug: 'editing-proofreading',
     name: 'Editing & proofreading',
-    image: '/images/services/publishing-support.svg',
+    image: '/images/services/editing-proofreading.webp',
     shortDescription: 'Professional editorial support to help prepare your manuscript for publication.',
     overview: 'Editorial support for independent authors and publishing teams who want another experienced pair of eyes on the manuscript before publication. The exact level of intervention depends on the book and where you are in the process.',
     process: [
@@ -103,7 +103,7 @@ export const services = [
   {
     slug: 'typesetting-layout',
     name: 'Typesetting & layout',
-    image: '/images/services/publishing-support.svg',
+    image: '/images/services/typesetting-layout.webp',
     shortDescription: 'Professional interior design and typesetting for print and digital books.',
     overview: 'We turn the finished manuscript into a professionally designed book interior. The layout is developed around the format, genre, content, and reading experience, then prepared correctly for the platforms and printers you intend to use.',
     process: [
@@ -117,7 +117,7 @@ export const services = [
   {
     slug: 'publishing-platform-support',
     name: 'Publishing & platform support',
-    image: '/images/services/publishing-support.svg',
+    image: '/images/services/publishing-platform-support.webp',
     shortDescription: 'Practical publishing support for getting a finished book correctly set up and available for sale.',
     overview: 'Support for the practical work between having finished book files and actually publishing them. We can help with metadata, ISBNs, pricing, platform setup, distribution choices, upload requirements, and the details that are easy to miss when publishing independently.',
     process: [
