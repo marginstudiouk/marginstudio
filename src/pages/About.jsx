@@ -64,12 +64,12 @@ export default function About() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="bg-secondary/50 p-10 md:p-14 rounded-[8px]"
+          className="max-w-4xl mx-auto bg-secondary/50 p-10 md:p-16 rounded-[8px] text-center"
         >
           <h2 className="font-display text-3xl md:text-4xl tracking-wide text-foreground leading-[0.9] mb-4">
             Want to work<br />together?
           </h2>
-          <p className="text-sm font-sans text-muted-foreground mb-8 max-w-sm leading-relaxed">
+          <p className="text-sm font-sans text-muted-foreground mb-8 max-w-md mx-auto leading-relaxed">
             We take on a limited number of projects each quarter. Tell us about your book and your goals.
           </p>
           <Link
