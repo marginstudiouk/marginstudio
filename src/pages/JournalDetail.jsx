@@ -24,6 +24,20 @@ export default function JournalDetail() {
     },
   });
 
+  const { data: allPosts = [] } = useQuery({
+    queryKey: ['journal-related-posts'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('posts')
+        .select('*')
+        .eq('status', 'published')
+        .order('published_date', { ascending: false });
+
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
   if (isLoading) {
     return <div className="px-6 lg:px-10 py-32 text-center">
       <div className="w-6 h-6 border-2 border-border border-t-foreground rounded-full animate-spin mx-auto" />
@@ -38,6 +52,17 @@ export default function JournalDetail() {
       </div>
     );
   }
+
+  const otherPosts = allPosts.filter((item) => item.id !== post.id);
+
+  const relatedByTag = otherPosts.filter((item) =>
+    (item.tags || []).some((tag) => (post.tags || []).includes(tag))
+  );
+
+  const relatedPosts = [
+    ...relatedByTag,
+    ...otherPosts.filter((item) => !relatedByTag.some((related) => related.id === item.id)),
+  ].slice(0, 2);
 
   return (
     <div className="px-6 lg:px-10 py-16 md:py-24">
@@ -103,6 +128,52 @@ export default function JournalDetail() {
               <span key={tag} className="font-mono text-xs text-muted-foreground bg-muted px-3 py-1">{tag}</span>
             ))}
           </div>
+        )}
+
+        {relatedPosts.length > 0 && (
+          <section className="mt-24">
+            <p className="font-mono text-xs tracking-widest uppercase text-muted-foreground mb-8">
+              You might also like
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {relatedPosts.map((related) => (
+                <Link
+                  key={related.id}
+                  to={`/journal/${related.slug}`}
+                  className="group block"
+                >
+                  {related.cover_image_url && (
+                    <div className="aspect-[4/3] overflow-hidden bg-secondary/50 rounded-[8px] mb-5">
+                      <img
+                        src={related.cover_image_url}
+                        alt={related.title}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                      />
+                    </div>
+                  )}
+
+                  <p className="font-mono text-xs tracking-widest uppercase text-primary mb-3">
+                    {fmtDate(related.published_date)}
+                  </p>
+
+                  <h2 className="font-display text-2xl md:text-3xl tracking-wide text-foreground leading-tight mb-3 group-hover:text-primary transition-colors">
+                    {related.title}
+                  </h2>
+
+                  {related.excerpt && (
+                    <p className="text-sm font-sans text-muted-foreground leading-relaxed mb-4">
+                      {related.excerpt}
+                    </p>
+                  )}
+
+                  <span className="font-mono text-xs tracking-widest uppercase text-primary">
+                    Read article
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </section>
         )}
        </div>
       </div>
