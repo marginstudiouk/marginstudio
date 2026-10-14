@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { supabase, callFunction } from '@/lib/supabaseClient';
 import { useAuth } from '@/lib/AuthContext';
 import { useQuery } from '@tanstack/react-query';
-import { Download, Package, Loader2 } from 'lucide-react';
+import { Download, Package, Loader2, Mail } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
@@ -18,7 +18,7 @@ export default function Library() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('purchases')
-        .select('*, product:products(name, cover_image_url)')
+        .select('*, product:products(name, cover_image_url, category)')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
       if (error) throw error;
@@ -76,6 +76,7 @@ export default function Library() {
         ) : (
           <div>
             {purchases.map((item, i) => {
+              const isPremadeCover = item.product?.category === 'premade_covers';
               const remaining = item.max_downloads - item.download_count;
               return (
                 <motion.div
@@ -83,9 +84,9 @@ export default function Library() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: i * 0.05 }}
-                  className="flex items-center justify-between gap-6 py-7 border-b border-border"
+                  className="flex items-start justify-between gap-6 py-7 border-b border-border"
                 >
-                  <div className="flex items-center gap-5">
+                  <div className="flex items-start gap-5">
                     {item.product?.cover_image_url ? (
                       <div className="w-16 h-12 bg-background overflow-hidden flex-shrink-0 rounded-[8px]">
                         <img src={item.product.cover_image_url} alt={item.product_name} className="w-full h-full object-contain" />
@@ -95,13 +96,29 @@ export default function Library() {
                     )}
                     <div>
                       <h3 className="font-sans text-sm font-medium text-foreground">{item.product_name}</h3>
-                      <p className="font-mono text-xs text-muted-foreground mt-1">
-                        £{item.amount_paid} · {remaining} of {item.max_downloads} downloads left
-                      </p>
+                      {isPremadeCover ? (
+                        <>
+                          <p className="font-mono text-xs text-muted-foreground mt-1">
+                            £{item.amount_paid} · Order #{item.id}
+                          </p>
+                          <p className="font-sans text-xs text-muted-foreground mt-3 max-w-md leading-relaxed">
+                            Email <a href="mailto:hello@marginstudio.co.uk" className="text-foreground underline">hello@marginstudio.co.uk</a> with your order number above and your book title, author name, and subtitle or series information if applicable. For paperback orders, also include your final page count, trim size, and paper colour.
+                          </p>
+                        </>
+                      ) : (
+                        <p className="font-mono text-xs text-muted-foreground mt-1">
+                          £{item.amount_paid} · {remaining} of {item.max_downloads} downloads left
+                        </p>
+                      )}
                     </div>
                   </div>
-                  <div className="flex items-center gap-4">
-                    {remaining > 0 ? (
+                  <div className="flex items-center gap-4 flex-shrink-0">
+                    {isPremadeCover ? (
+                      <span className="font-mono text-xs text-muted-foreground tracking-widest uppercase flex items-center gap-2">
+                        <Mail className="w-3 h-3" />
+                        Email us
+                      </span>
+                    ) : remaining > 0 ? (
                       <button
                         onClick={() => handleDownload(item)}
                         disabled={downloadingId === item.id}
