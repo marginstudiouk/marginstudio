@@ -4,6 +4,7 @@ import { queryClientInstance } from '@/lib/query-client'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider } from '@/lib/AuthContext';
+import { CartProvider } from '@/lib/CartContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import AdminRoute from '@/components/AdminRoute';
 
@@ -13,6 +14,7 @@ import Shop from './pages/Shop';
 import Resources from './pages/Resources';
 import CaseStudy from './pages/CaseStudy';
 import ProductDetail from './pages/ProductDetail';
+import Cart from './pages/Cart';
 import Library from './pages/Library';
 import Services from './pages/Services';
 import ServiceDetail from './pages/ServiceDetail';
@@ -36,49 +38,52 @@ import ResetPassword from './pages/ResetPassword';
 function App() {
   return (
     <AuthProvider>
-      <QueryClientProvider client={queryClientInstance}>
-        <Router>
-          <Routes>
-            <Route element={<SiteLayout />}>
-              {/* Public */}
-              <Route path="/" element={<Home />} />
-              <Route path="/shop" element={<Shop />} />
-              <Route path="/resources" element={<Resources />} />
-              <Route path="/case-studies/:slug" element={<CaseStudy />} />
-              <Route path="/product/:slug" element={<ProductDetail />} />
-              <Route path="/services" element={<Services />} />
-              <Route path="/services/:slug" element={<ServiceDetail />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/faq" element={<FAQ />} />
-              <Route path="/packages" element={<Packages />} />
-              <Route path="/packages/:slug" element={<PackageDetail />} />
-              <Route path="/journal" element={<Journal />} />
-              <Route path="/journal/:slug" element={<JournalDetail />} />
-              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-              <Route path="/terms-of-service" element={<TermsOfService />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              <Route path="/studio-login" element={<StudioLogin />} />
+      <CartProvider>
+        <QueryClientProvider client={queryClientInstance}>
+          <Router>
+            <Routes>
+              <Route element={<SiteLayout />}>
+                {/* Public */}
+                <Route path="/" element={<Home />} />
+                <Route path="/shop" element={<Shop />} />
+                <Route path="/resources" element={<Resources />} />
+                <Route path="/case-studies/:slug" element={<CaseStudy />} />
+                <Route path="/product/:slug" element={<ProductDetail />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/services" element={<Services />} />
+                <Route path="/services/:slug" element={<ServiceDetail />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/faq" element={<FAQ />} />
+                <Route path="/packages" element={<Packages />} />
+                <Route path="/packages/:slug" element={<PackageDetail />} />
+                <Route path="/journal" element={<Journal />} />
+                <Route path="/journal/:slug" element={<JournalDetail />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/terms-of-service" element={<TermsOfService />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/studio-login" element={<StudioLogin />} />
 
-              {/* Logged-in customers (and admin) */}
-              <Route element={<ProtectedRoute />}>
-                <Route path="/account" element={<Account />} />
-                <Route path="/library" element={<Library />} />
-              </Route>
+                {/* Logged-in customers (and admin) */}
+                <Route element={<ProtectedRoute />}>
+                  <Route path="/account" element={<Account />} />
+                  <Route path="/library" element={<Library />} />
+                </Route>
 
-              {/* Admin only */}
-              <Route element={<AdminRoute />}>
-                <Route path="/admin" element={<Admin />} />
+                {/* Admin only */}
+                <Route element={<AdminRoute />}>
+                  <Route path="/admin" element={<Admin />} />
+                </Route>
               </Route>
-            </Route>
-            <Route path="*" element={<PageNotFound />} />
-          </Routes>
-        </Router>
-        <Toaster />
-      </QueryClientProvider>
+              <Route path="*" element={<PageNotFound />} />
+            </Routes>
+          </Router>
+          <Toaster />
+        </QueryClientProvider>
+      </CartProvider>
     </AuthProvider>
   )
 }

@@ -5,6 +5,11 @@
 // what makes "did this person actually pay" trustworthy. Configure this as
 // an endpoint in the Stripe Dashboard listening for `checkout.session.completed`.
 //
+// A checkout session can now contain several cart line items. Each line
+// item's ad-hoc Stripe product carries our product_id / variant_id /
+// variant_label in its metadata (set in create-checkout-session), so we
+// fetch the session's line items and write one `purchases` row per item.
+//
 // Deploy with --no-verify-jwt since Stripe can't send a Supabase auth header:
 //   supabase functions deploy stripe-webhook --no-verify-jwt
 
@@ -51,25 +56,55 @@ Deno.serve(async (req) => {
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
-    const { user_id, product_id, product_name } = session.metadata ?? {};
+    const { user_id } = session.metadata ?? {};
 
-    if (!user_id || !product_id) {
-      console.error("Missing metadata on checkout session", session.id);
+    if (!user_id) {
+      console.error("Missing user_id metadata on checkout session", session.id);
       return new Response("Missing metadata", { status: 400 });
     }
 
-    const { data: existing } = await supabaseAdmin
-      .from("purchases")
-      .select("id")
-      .eq("stripe_checkout_session_id", session.id)
-      .maybeSingle();
+    const lineItems = await stripe.checkout.sessions.listLineItems(session.id, {
+      expand: ["data.price.product"],
+      limit: 100,
+    });
 
-    if (!existing) {
+    const purchasedForEmail: { name: string; amount: number }[] = [];
+
+    for (const line of lineItems.data) {
+      const price = line.price;
+      const stripeProduct = price?.product as Stripe.Product | undefined;
+      const metadata = stripeProduct?.metadata ?? {};
+      const productId = metadata.product_id;
+      const variantId = metadata.variant_id || null;
+      const variantLabel = metadata.variant_label || null;
+      const lineName = stripeProduct?.name ?? line.description ?? "Product";
+      const lineAmount = (line.amount_total ?? 0) / 100;
+
+      if (!productId) {
+        console.error("Line item missing product_id metadata", session.id, line.id);
+        continue;
+      }
+
+      // Idempotency: a webhook retry must not insert the same line twice.
+      let existingQuery = supabaseAdmin
+        .from("purchases")
+        .select("id")
+        .eq("stripe_checkout_session_id", session.id)
+        .eq("product_id", productId);
+      existingQuery = variantId
+        ? existingQuery.eq("variant_id", variantId)
+        : existingQuery.is("variant_id", null);
+      const { data: existing } = await existingQuery.maybeSingle();
+
+      if (existing) continue;
+
       const { error: insertError } = await supabaseAdmin.from("purchases").insert({
         user_id,
-        product_id,
-        product_name: product_name ?? "Product",
-        amount_paid: (session.amount_total ?? 0) / 100,
+        product_id: productId,
+        product_name: lineName,
+        variant_id: variantId,
+        variant_label: variantLabel,
+        amount_paid: lineAmount,
         currency: session.currency ?? "gbp",
         stripe_checkout_session_id: session.id,
         stripe_payment_intent_id: session.payment_intent as string,
@@ -78,37 +113,48 @@ Deno.serve(async (req) => {
 
       if (insertError) {
         console.error("Failed to insert purchase:", insertError);
-        return new Response("DB insert failed", { status: 500 });
+        continue;
       }
+
+      purchasedForEmail.push({ name: lineName, amount: lineAmount });
 
       const { data: productRow } = await supabaseAdmin
         .from("products")
         .select("category")
-        .eq("id", product_id)
+        .eq("id", productId)
         .single();
 
       if (productRow?.category === "premade_covers") {
         await supabaseAdmin
           .from("products")
           .update({ sold_out: true })
-          .eq("id", product_id);
+          .eq("id", productId);
       }
+    }
 
+    if (purchasedForEmail.length > 0) {
       const customerEmail = session.customer_email ?? session.customer_details?.email;
+      const itemsListHtml = purchasedForEmail
+        .map((p) => `<li>${p.name} — £${p.amount.toFixed(2)}</li>`)
+        .join("");
+      const total = ((session.amount_total ?? 0) / 100).toFixed(2);
 
       if (customerEmail) {
         await sendEmail(
           customerEmail,
           "Your Margin Studio purchase",
-          `<p>Thanks for your purchase — <strong>${product_name}</strong> is ready in your library.</p>
-           <p><a href="${Deno.env.get("SITE_URL") ?? "https://marginstudio.co.uk"}/library">Go to your library</a> to download it (up to 5 downloads).</p>`
+          `<p>Thanks for your purchase — everything below is ready in your library.</p>
+           <ul>${itemsListHtml}</ul>
+           <p><a href="${Deno.env.get("SITE_URL") ?? "https://marginstudio.co.uk"}/library">Go to your library</a> to download it (up to 5 downloads per item).</p>`
         );
       }
 
       await sendEmail(
         NOTIFY_EMAIL,
-        `New sale: ${product_name}`,
-        `<p>${customerEmail ?? "A customer"} just bought <strong>${product_name}</strong> for £${((session.amount_total ?? 0) / 100).toFixed(2)}.</p>
+        `New sale: ${purchasedForEmail.length > 1 ? `${purchasedForEmail.length} items` : purchasedForEmail[0].name}`,
+        `<p>${customerEmail ?? "A customer"} just bought:</p>
+         <ul>${itemsListHtml}</ul>
+         <p>Total: £${total}</p>
          <p>Payment intent: ${session.payment_intent}</p>`
       );
     }

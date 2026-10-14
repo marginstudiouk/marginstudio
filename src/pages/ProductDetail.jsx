@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { supabase, callFunction } from '@/lib/supabaseClient';
-import { useAuth } from '@/lib/AuthContext';
+import { useCart } from '@/lib/CartContext';
 import { useQuery } from '@tanstack/react-query';
-import { Check, Loader2 } from 'lucide-react';
+import { Check, Loader2, Mail, Download, ShoppingBag } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useNavigate, Link, useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 const categoryLabels = {
@@ -14,12 +14,24 @@ const categoryLabels = {
   elements: 'Elements',
 };
 
+const STORAGE_KEY = 'margin_subscriber';
+
 export default function ProductDetail() {
   const { slug } = useParams();
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
-  const [purchasing, setPurchasing] = useState(false);
+  const { addItem, isInCart } = useCart();
   const [selectedVariantId, setSelectedVariantId] = useState(null);
+
+  // --- free resource email-gate state ---
+  const cachedSubscriber = (() => {
+    try { return JSON.parse(sessionStorage.getItem(STORAGE_KEY) || 'null'); } catch { return null; }
+  })();
+  const [showForm, setShowForm] = useState(false);
+  const [email, setEmail] = useState(cachedSubscriber?.email || '');
+  const [name, setName] = useState(cachedSubscriber?.name || '');
+  const [submitting, setSubmitting] = useState(false);
+  const [downloadUrl, setDownloadUrl] = useState(null);
+  const [formError, setFormError] = useState('');
 
   const { data: product, isLoading } = useQuery({
     queryKey: ['product', slug],
@@ -34,34 +46,35 @@ export default function ProductDetail() {
   const hasVariants = variants.length > 0;
   const selectedVariant = variants.find((v) => v.id === selectedVariantId) || null;
 
-  const handlePurchase = async () => {
-    if (!isAuthenticated) {
-      navigate('/login', { state: { from: `/product/${slug}` } });
-      return;
-    }
-
+  const handleAddToCart = () => {
     if (hasVariants && !selectedVariantId) {
       toast.error('Please choose an option first.');
       return;
     }
+    addItem(product, selectedVariant);
+    toast.success(`${product.name} added to your cart.`);
+  };
 
-    setPurchasing(true);
+  const requestDownload = async (e) => {
+    e?.preventDefault();
+    setSubmitting(true);
+    setFormError('');
     try {
-      const { url } = await callFunction('create-checkout-session', {
+      const { url } = await callFunction('send-subscriber-email', {
+        email,
+        name: name || undefined,
         product_id: product.id,
-        variant_id: selectedVariantId || undefined,
-        origin: window.location.origin,
       });
-      if (url) {
-        window.location.href = url;
-      } else {
-        throw new Error('No checkout URL returned');
-      }
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ email, name }));
+      setDownloadUrl(url);
     } catch (err) {
-      toast.error(err.message || 'Something went wrong. Please try again.');
-      setPurchasing(false);
+      setFormError('Something went wrong, try again or email hello@marginstudio.co.uk.');
+    } finally {
+      setSubmitting(false);
     }
   };
+
+  const alreadyKnown = !!cachedSubscriber?.email && !downloadUrl && !showForm;
 
   if (isLoading) {
     return (
@@ -85,6 +98,8 @@ export default function ProductDetail() {
     ? Math.min(...variants.map((v) => Number(v.price) || 0))
     : product.price;
 
+  const inCart = isInCart(product.id, selectedVariantId);
+
   return (
     <div className="px-6 lg:px-10 py-16 md:py-24">
       <div className="max-w-7xl mx-auto">
@@ -100,6 +115,11 @@ export default function ProductDetail() {
               ) : (
                 <div className="w-full h-full flex items-center justify-center grid-overlay">
                   <span className="font-display text-3xl uppercase text-muted-foreground tracking-wide">{product.name}</span>
+                </div>
+              )}
+              {product.is_free && (
+                <div className="absolute top-3 left-3">
+                  <span className="font-mono text-xs tracking-widest bg-background/80 backdrop-blur-sm text-foreground px-2 py-1">Free</span>
                 </div>
               )}
               {product.sold_out && (
@@ -127,7 +147,7 @@ export default function ProductDetail() {
                 {categoryLabels[product.category] || product.category?.replace(/_/g, ' ')}
               </p>
               <h1 className="font-sans text-2xl md:text-3xl font-semibold text-foreground mb-4 leading-snug">{product.name}</h1>
-              {!product.sold_out && (
+              {!product.sold_out && !product.is_free && (
                 <p className="font-mono text-xl text-primary">
                   {hasVariants && !selectedVariant ? `From £${displayPrice}` : `£${displayPrice}`}
                 </p>
@@ -192,27 +212,97 @@ export default function ProductDetail() {
             )}
 
             {product.is_free ? (
-              <div className="w-full bg-secondary/50 px-6 py-5 text-center">
-                <p className="font-mono text-xs tracking-widest uppercase text-muted-foreground mb-3">This is a free resource</p>
-                <Link to="/resources" className="font-mono text-xs tracking-widest uppercase text-primary border-b border-primary pb-0.5">
-                  Get it on the resources page
-                </Link>
+              <div className="w-full bg-secondary/50 px-6 py-5">
+                {downloadUrl ? (
+                  <div className="text-center space-y-2">
+                    <a
+                      href={downloadUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center font-mono text-xs tracking-widest uppercase bg-primary text-primary-foreground hover:bg-primary/90 transition-colors px-6 py-3"
+                    >
+                      <Download className="w-3.5 h-3.5 mr-2" />
+                      Download now
+                    </a>
+                    <p className="text-xs font-sans text-muted-foreground/70">Also on its way to {email}</p>
+                  </div>
+                ) : alreadyKnown ? (
+                  <div className="text-center">
+                    {formError && <p className="text-xs font-sans text-destructive mb-2">{formError}</p>}
+                    <button
+                      onClick={requestDownload}
+                      disabled={submitting}
+                      className="inline-flex items-center font-mono text-xs tracking-widest uppercase bg-primary text-primary-foreground hover:bg-primary/90 transition-colors px-6 py-3 disabled:opacity-60"
+                    >
+                      {submitting ? <Loader2 className="w-3.5 h-3.5 mr-2 animate-spin" /> : <Download className="w-3.5 h-3.5 mr-2" />}
+                      Get it free
+                    </button>
+                  </div>
+                ) : !showForm ? (
+                  <div className="text-center">
+                    <p className="font-mono text-xs tracking-widest uppercase text-muted-foreground mb-3">This is a free resource</p>
+                    <button
+                      onClick={() => setShowForm(true)}
+                      className="inline-flex items-center font-mono text-xs tracking-widest uppercase bg-primary text-primary-foreground hover:bg-primary/90 transition-colors px-6 py-3"
+                    >
+                      <Mail className="w-3.5 h-3.5 mr-2" />
+                      Get it free
+                    </button>
+                  </div>
+                ) : (
+                  <form onSubmit={requestDownload} className="space-y-2 max-w-sm mx-auto">
+                    {formError && <p className="text-xs font-sans text-destructive">{formError}</p>}
+                    <input
+                      type="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Email"
+                      className="w-full bg-background border border-border px-3 py-2.5 text-sm font-sans focus:outline-none focus:border-primary"
+                    />
+                    <input
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Name (optional)"
+                      className="w-full bg-background border border-border px-3 py-2.5 text-sm font-sans focus:outline-none focus:border-primary"
+                    />
+                    <button
+                      type="submit"
+                      disabled={submitting}
+                      className="w-full inline-flex items-center justify-center font-mono text-xs tracking-widest uppercase bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-60 transition-colors px-5 py-3"
+                    >
+                      {submitting ? (
+                        <>
+                          <Loader2 className="w-3.5 h-3.5 mr-2 animate-spin" />
+                          Sending
+                        </>
+                      ) : (
+                        'Join & download'
+                      )}
+                    </button>
+                  </form>
+                )}
               </div>
             ) : product.sold_out ? (
               <div className="w-full bg-secondary/50 px-6 py-5 text-center">
                 <p className="font-mono text-xs tracking-widest uppercase text-muted-foreground">This item has sold</p>
               </div>
+            ) : inCart ? (
+              <button
+                onClick={() => navigate('/cart')}
+                className="w-full bg-primary/10 border border-primary text-primary hover:bg-primary/20 transition-colors py-4 font-mono text-xs tracking-widest uppercase flex items-center justify-center gap-2"
+              >
+                <Check className="w-3.5 h-3.5" /> In your cart — view cart
+              </button>
             ) : (
               <button
-                onClick={handlePurchase}
-                disabled={purchasing || (hasVariants && !selectedVariantId)}
+                onClick={handleAddToCart}
+                disabled={hasVariants && !selectedVariantId}
                 className="w-full bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-60 transition-colors py-4 font-mono text-xs tracking-widest uppercase flex items-center justify-center gap-2"
               >
-                {purchasing ? (
-                  <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Redirecting to checkout</>
-                ) : (
-                  'Get instant access'
-                )}
+                <ShoppingBag className="w-3.5 h-3.5" />
+                Add to cart
               </button>
             )}
           </motion.div>

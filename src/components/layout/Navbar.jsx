@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ShoppingBag } from 'lucide-react';
 import { useAuth } from '@/lib/AuthContext';
+import { useCart } from '@/lib/CartContext';
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { isAuthenticated, isAdmin, signOut } = useAuth();
+  const { itemCount } = useCart();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -78,6 +80,18 @@ export default function Navbar() {
               </button>
             )}
             <Link
+              to="/cart"
+              className="relative text-muted-foreground hover:text-foreground transition-colors"
+              aria-label="Cart"
+            >
+              <ShoppingBag className="w-4 h-4" />
+              {itemCount > 0 && (
+                <span className="absolute -top-2 -right-2 flex items-center justify-center w-4 h-4 rounded-full bg-primary text-primary-foreground font-mono text-[9px] leading-none">
+                  {itemCount}
+                </span>
+              )}
+            </Link>
+            <Link
               to="/shop"
               className="font-mono text-xs tracking-widest uppercase bg-primary text-primary-foreground hover:bg-primary/90 transition-colors px-4 py-2"
             >
@@ -85,12 +99,26 @@ export default function Navbar() {
             </Link>
           </div>
 
-          <button
-            className="md:hidden text-foreground"
-            onClick={() => setMobileOpen(!mobileOpen)}
-          >
-            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
+          <div className="flex items-center gap-4 md:hidden">
+            <Link
+              to="/cart"
+              className="relative text-foreground"
+              aria-label="Cart"
+            >
+              <ShoppingBag className="w-5 h-5" />
+              {itemCount > 0 && (
+                <span className="absolute -top-2 -right-2 flex items-center justify-center w-4 h-4 rounded-full bg-primary text-primary-foreground font-mono text-[9px] leading-none">
+                  {itemCount}
+                </span>
+              )}
+            </Link>
+            <button
+              className="text-foreground"
+              onClick={() => setMobileOpen(!mobileOpen)}
+            >
+              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
         </div>
       </div>
 
