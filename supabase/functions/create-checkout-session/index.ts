@@ -173,6 +173,7 @@ Deno.serve(async (req) => {
       customer_email: user.email,
       success_url: `${site}/library?checkout=success`,
       cancel_url: `${site}/cart?checkout=cancelled`,
+      allow_promotion_codes: true,
       metadata: {
         user_id: user.id,
       },
