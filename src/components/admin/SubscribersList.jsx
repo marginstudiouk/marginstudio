@@ -1,7 +1,28 @@
 import React, { useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Download } from 'lucide-react';
+
+function downloadCSV(subscribers) {
+  const header = ['email', 'name', 'created_at'];
+  const rows = subscribers.map((s) => [
+    s.email ?? '',
+    s.name ?? '',
+    s.created_at ?? '',
+  ]);
+  const escape = (val) => `"${String(val).replace(/"/g, '""')}"`;
+  const csv = [header, ...rows].map((row) => row.map(escape).join(',')).join('\n');
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `subscribers-${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
 
 export default function SubscribersList() {
   const qc = useQueryClient();
@@ -32,12 +53,22 @@ export default function SubscribersList() {
 
   return (
     <div className="space-y-5">
-      <input
-        value={q}
-        onChange={(e) => setQ(e.target.value)}
-        placeholder="Search by email or name"
-        className="w-full bg-background border border-border px-4 py-3 text-sm font-sans focus:outline-none focus:border-primary"
-      />
+      <div className="flex items-center gap-3">
+        <input
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="Search by email or name"
+          className="flex-1 bg-background border border-border px-4 py-3 text-sm font-sans focus:outline-none focus:border-primary"
+        />
+        <button
+          onClick={() => downloadCSV(subscribers)}
+          disabled={subscribers.length === 0}
+          className="flex-shrink-0 flex items-center gap-2 font-mono text-xs tracking-widest uppercase bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 transition-colors px-4 py-3"
+        >
+          <Download className="w-3.5 h-3.5" />
+          Download CSV
+        </button>
+      </div>
 
       {isLoading ? (
         <p className="font-mono text-xs text-muted-foreground">Loading…</p>
