@@ -187,7 +187,9 @@ create policy "inquiries_select_admin" on public.inquiries for select using (pub
 create policy "inquiries_update_admin" on public.inquiries for update using (public.is_admin());
 
 -- ----------------------------------------------------------------------------
--- PURCHASES  (one row per completed Stripe payment)
+-- PURCHASES  (one row per product bought, since a cart checkout can contain
+-- several items under the same Stripe session — stripe_checkout_session_id
+-- is therefore no longer unique on its own; a session can have many rows.)
 -- Only ever written by the stripe-webhook edge function (service role key),
 -- never directly by the client — this is what makes it trustworthy as proof of purchase.
 -- ----------------------------------------------------------------------------
@@ -196,9 +198,11 @@ create table if not exists public.purchases (
   user_id uuid not null references auth.users(id) on delete cascade,
   product_id uuid not null references public.products(id),
   product_name text not null,
+  variant_id text,
+  variant_label text,
   amount_paid numeric(10,2) not null,
   currency text not null default 'gbp',
-  stripe_checkout_session_id text unique,
+  stripe_checkout_session_id text,
   stripe_payment_intent_id text,
   status text not null default 'completed' check (status in ('completed','refunded')),
   download_count int not null default 0,
