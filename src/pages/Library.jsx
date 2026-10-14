@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase, callFunction } from '@/lib/supabaseClient';
 import { useAuth } from '@/lib/AuthContext';
+import { useCart } from '@/lib/CartContext';
 import { useQuery } from '@tanstack/react-query';
 import { Download, Package, Loader2, Mail } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
@@ -9,8 +10,15 @@ import { toast } from 'sonner';
 
 export default function Library() {
   const { user } = useAuth();
+  const { clearCart } = useCart();
   const [searchParams] = useSearchParams();
   const [downloadingId, setDownloadingId] = useState(null);
+
+  useEffect(() => {
+    if (searchParams.get('checkout') === 'success') {
+      clearCart();
+    }
+  }, [searchParams, clearCart]);
 
   const { data: purchases = [], isLoading, refetch } = useQuery({
     queryKey: ['purchases', user?.id],
