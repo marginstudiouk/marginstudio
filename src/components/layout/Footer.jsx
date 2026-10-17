@@ -34,7 +34,88 @@ export default function Footer() {
               Manchester based boutique marketing and branding agency specialising in authors, publishers and bookish brands.
             </p>
 
-            <div className="flex items-center gap-4 mt-5 mb-6">
+            <FooterNewsletter />
+          </div>
+
+          <div>
+            <p className="font-mono text-xs tracking-widest uppercase text-muted-foreground mb-5">
+              Studio
+            </p>
+
+            <div className="space-y-3">
+              <Link
+                to="/services"
+                className="block text-sm font-sans text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Services
+              </Link>
+
+              <Link
+                to="/packages"
+                className="block text-sm font-sans text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Packages
+              </Link>
+
+              <Link
+                to="/shop"
+                className="block text-sm font-sans text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Shop
+              </Link>
+
+              <Link
+                to="/resources"
+                className="block text-sm font-sans text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Resources
+              </Link>
+
+              <Link
+                to="/about"
+                className="block text-sm font-sans text-muted-foreground hover:text-foreground transition-colors"
+              >
+                About
+              </Link>
+
+              <Link
+                to="/faq"
+                className="block text-sm font-sans text-muted-foreground hover:text-foreground transition-colors"
+              >
+                FAQ
+              </Link>
+
+              <Link
+                to="/contact"
+                className="block text-sm font-sans text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Contact
+              </Link>
+            </div>
+          </div>
+
+          <div className="flex flex-col">
+            <p className="font-mono text-xs tracking-widest uppercase text-muted-foreground mb-5">
+              Legal
+            </p>
+
+            <div className="space-y-3">
+              <Link
+                to="/privacy-policy"
+                className="block text-sm font-sans text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Privacy policy
+              </Link>
+
+              <Link
+                to="/terms-of-service"
+                className="block text-sm font-sans text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Terms of service
+              </Link>
+            </div>
+
+            <div className="flex items-center justify-end gap-4 mt-8 md:mt-auto">
               <a
                 href="https://www.instagram.com/margin_studio/"
                 target="_blank"
@@ -55,37 +136,10 @@ export default function Footer() {
                 <TikTokIcon size={17} />
               </a>
             </div>
-
-            <FooterNewsletter />
-          </div>
-
-          <div>
-            <p className="font-mono text-xs tracking-widest uppercase text-muted-foreground mb-5">
-              Studio
-            </p>
-            <div className="space-y-3">
-              <Link to="/services" className="block text-sm font-sans text-muted-foreground hover:text-foreground transition-colors">Services</Link>
-              <Link to="/packages" className="block text-sm font-sans text-muted-foreground hover:text-foreground transition-colors">Packages</Link>
-              <Link to="/shop" className="block text-sm font-sans text-muted-foreground hover:text-foreground transition-colors">Shop</Link>
-              <Link to="/resources" className="block text-sm font-sans text-muted-foreground hover:text-foreground transition-colors">Resources</Link>
-              <Link to="/about" className="block text-sm font-sans text-muted-foreground hover:text-foreground transition-colors">About</Link>
-              <Link to="/faq" className="block text-sm font-sans text-muted-foreground hover:text-foreground transition-colors">FAQ</Link>
-              <Link to="/contact" className="block text-sm font-sans text-muted-foreground hover:text-foreground transition-colors">Contact</Link>
-            </div>
-          </div>
-
-          <div>
-            <p className="font-mono text-xs tracking-widest uppercase text-muted-foreground mb-5">
-              Legal
-            </p>
-            <div className="space-y-3">
-              <Link to="/privacy-policy" className="block text-sm font-sans text-muted-foreground hover:text-foreground transition-colors">Privacy policy</Link>
-              <Link to="/terms-of-service" className="block text-sm font-sans text-muted-foreground hover:text-foreground transition-colors">Terms of service</Link>
-            </div>
           </div>
         </div>
 
-        <div className="mt-14 pt-8 border-t border-border flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="mt-14 pt-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <p className="font-mono text-xs text-muted-foreground/50">
             &copy; {new Date().getFullYear()} Margin Studio
           </p>

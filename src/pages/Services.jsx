@@ -13,15 +13,12 @@ export default function Services() {
       const { data, error } = await supabase
         .from('products')
         .select('id, name, slug, cover_image_url')
-        .eq('category', 'premade_covers')
-        .eq('is_free', false)
-        .eq('sold_out', false)
-        .not('cover_image_url', 'is', null);
+        .eq('category', 'premade_covers');
 
       if (error) throw error;
 
       return (data || []).filter(
-        (product) => product.cover_image_url && product.slug
+        (product) => product.cover_image_url
       );
     },
   });
@@ -29,7 +26,10 @@ export default function Services() {
   const featuredCover = useMemo(() => {
     if (!premadeCovers.length) return null;
 
-    const randomIndex = Math.floor(Math.random() * premadeCovers.length);
+    const randomIndex = Math.floor(
+      Math.random() * premadeCovers.length
+    );
+
     return premadeCovers[randomIndex];
   }, [premadeCovers]);
 
@@ -45,6 +45,7 @@ export default function Services() {
           <h1 className="font-display text-6xl md:text-8xl tracking-wide text-foreground leading-[0.9] mb-6">
             Services
           </h1>
+
           <p className="text-sm font-sans text-muted-foreground leading-relaxed">
             Creative, marketing, and publishing support for authors and publishing businesses, built around the work rather than a fixed formula.
           </p>
@@ -57,7 +58,10 @@ export default function Services() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.45, delay: i * 0.04 }}
+              transition={{
+                duration: 0.45,
+                delay: i * 0.04,
+              }}
             >
               <Link
                 to={`/services/${service.slug}`}
@@ -66,9 +70,11 @@ export default function Services() {
                 <h2 className="font-display text-2xl md:text-3xl uppercase tracking-wide text-foreground group-hover:text-primary-foreground leading-none mb-4 transition-colors">
                   {service.name}
                 </h2>
+
                 <p className="text-sm font-sans text-muted-foreground group-hover:text-primary-foreground/80 leading-relaxed flex-1 transition-colors">
                   {service.shortDescription}
                 </p>
+
                 <span className="font-mono text-xs tracking-widest uppercase text-primary group-hover:text-primary-foreground mt-8 transition-colors">
                   Learn more
                 </span>
@@ -88,9 +94,11 @@ export default function Services() {
             <h2 className="font-display text-3xl md:text-4xl tracking-wide text-foreground leading-[0.95] mb-4">
               Premade book covers
             </h2>
+
             <p className="text-sm font-sans text-muted-foreground leading-relaxed max-w-md mb-6">
               Ready-to-buy cover designs for authors who want a professional cover without a full custom commission. Each design is sold once.
             </p>
+
             <Link
               to="/shop?category=premade_covers"
               className="inline-flex items-center font-mono text-xs tracking-widest uppercase bg-primary text-primary-foreground hover:bg-primary/90 transition-colors px-6 py-3"
@@ -101,17 +109,11 @@ export default function Services() {
 
           <div className="md:col-span-4 aspect-[3/4] overflow-hidden bg-secondary/50 rounded-[8px]">
             {featuredCover ? (
-              <Link
-                to={`/product/${featuredCover.slug}`}
-                className="block w-full h-full group"
-                aria-label={`View ${featuredCover.name}`}
-              >
-                <img
-                  src={featuredCover.cover_image_url}
-                  alt={`${featuredCover.name} premade book cover`}
-                  className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-[1.03]"
-                />
-              </Link>
+              <img
+                src={featuredCover.cover_image_url}
+                alt={`Premade book cover design: ${featuredCover.name}`}
+                className="w-full h-full object-contain"
+              />
             ) : (
               <img
                 src="/images/services/book-covers.svg"
@@ -132,9 +134,11 @@ export default function Services() {
           <h2 className="font-display text-4xl md:text-5xl tracking-wide text-foreground leading-[0.9] mb-4">
             Ready to work together?
           </h2>
+
           <p className="text-sm font-sans text-muted-foreground mb-8 max-w-lg mx-auto leading-relaxed">
             Tell us about your project, where you are in the process, and what you need help with.
           </p>
+
           <Link
             to="/contact"
             className="inline-flex items-center font-mono text-xs tracking-widest uppercase bg-primary text-primary-foreground hover:bg-primary/90 transition-colors px-8 py-4"
