@@ -1,9 +1,38 @@
-import React from 'react';
+
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/lib/supabaseClient';
 import { services } from '@/lib/servicesData';
 
 export default function Services() {
+  const { data: premadeCovers = [] } = useQuery({
+    queryKey: ['services-premade-covers'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('products')
+        .select('id, name, slug, cover_image_url')
+        .eq('category', 'premade_covers')
+        .eq('is_free', false)
+        .eq('sold_out', false)
+        .not('cover_image_url', 'is', null);
+
+      if (error) throw error;
+
+      return (data || []).filter(
+        (product) => product.cover_image_url && product.slug
+      );
+    },
+  });
+
+  const featuredCover = useMemo(() => {
+    if (!premadeCovers.length) return null;
+
+    const randomIndex = Math.floor(Math.random() * premadeCovers.length);
+    return premadeCovers[randomIndex];
+  }, [premadeCovers]);
+
   return (
     <div className="px-6 lg:px-10 py-16 md:py-24">
       <div className="max-w-7xl mx-auto">
@@ -71,11 +100,25 @@ export default function Services() {
           </div>
 
           <div className="md:col-span-4 aspect-[3/4] overflow-hidden bg-secondary/50 rounded-[8px]">
-            <img
-              src="/images/services/book-covers.svg"
-              alt="Premade book covers"
-              className="w-full h-full object-cover"
-            />
+            {featuredCover ? (
+              <Link
+                to={`/product/${featuredCover.slug}`}
+                className="block w-full h-full group"
+                aria-label={`View ${featuredCover.name}`}
+              >
+                <img
+                  src={featuredCover.cover_image_url}
+                  alt={`${featuredCover.name} premade book cover`}
+                  className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-[1.03]"
+                />
+              </Link>
+            ) : (
+              <img
+                src="/images/services/book-covers.svg"
+                alt="Premade book covers"
+                className="w-full h-full object-cover"
+              />
+            )}
           </div>
         </motion.div>
 
