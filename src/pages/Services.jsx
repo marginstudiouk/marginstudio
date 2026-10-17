@@ -107,18 +107,18 @@ export default function Services() {
             </Link>
           </div>
 
-          <div className="md:col-span-4 aspect-[3/4] overflow-hidden bg-secondary/50 rounded-[8px]">
+          <div className="md:col-span-4 flex justify-center md:justify-end">
             {featuredCover ? (
               <img
                 src={featuredCover.cover_image_url}
                 alt={`Premade book cover design: ${featuredCover.name}`}
-                className="w-full h-full object-contain"
+                className="block w-auto h-auto max-w-full max-h-[440px]"
               />
             ) : (
               <img
                 src="/images/services/book-covers.svg"
                 alt="Premade book covers"
-                className="w-full h-full object-cover"
+                className="block w-auto h-auto max-w-full max-h-[440px]"
               />
             )}
           </div>
